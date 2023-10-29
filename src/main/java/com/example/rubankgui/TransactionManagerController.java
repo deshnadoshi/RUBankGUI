@@ -1,56 +1,41 @@
 package com.example.rubankgui;
 
+import java.lang.String;
+import java.time.LocalDate;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 public class TransactionManagerController {
     // "Open" Tab GUI Components
     @FXML
-    private Tab openTab;
-
-    @FXML
     private TextField openFname;
-
     @FXML
     private TextField openLname;
-
     @FXML
     private DatePicker openDOB;
-
     @FXML
     private TextField openAmt;
-
     @FXML
     private RadioButton openC;
-
     @FXML
     private RadioButton openCC;
-
     @FXML
     private RadioButton openCCNB;
-
     @FXML
     private RadioButton openCCNewark;
-
     @FXML
     private RadioButton openCCCamden;
-
     @FXML
     private RadioButton openS;
-
     @FXML
     private CheckBox openSLoyal;
-
     @FXML
     private RadioButton openMM;
-
     @FXML
     private Button openSubmit;
 
     // "Close" Tab GUI Components
-    @FXML
-    private Tab closeTab;
-
     @FXML
     private TextField closeFname;
 
@@ -76,9 +61,6 @@ public class TransactionManagerController {
     private Button closeSubmit;
 
     // "Deposit" Tab GUI Components
-    @FXML
-    private Tab depTab;
-
     @FXML
     private TextField depFname;
 
@@ -107,10 +89,6 @@ public class TransactionManagerController {
     private Button depSubmit;
 
     // "Withdraw" Tab GUI Components
-
-    @FXML
-    private Tab withTab;
-
     @FXML
     private TextField withFname;
 
@@ -141,9 +119,6 @@ public class TransactionManagerController {
     // "Account Database" Tab GUI Components
 
     @FXML
-    private Tab acctTab;
-
-    @FXML
     private Button pPrint;
 
     @FXML
@@ -155,6 +130,85 @@ public class TransactionManagerController {
     @FXML
     private TextArea actDBShow;
 
+    // Open Account Methods
+    @FXML
+    private boolean validProfile(ActionEvent event){
+        boolean isValidProfile = false;
+
+        String fname = openFname.getText();
+        String lname = openLname.getText();
+
+        LocalDate dob = openDOB.getValue();
+        int day = dob.getDayOfMonth();
+        int month = dob.getMonthValue();
+        int year = dob.getYear();
+
+        return isValidProfile;
+    }
+
+    @FXML
+    private boolean canOpen(ActionEvent event){
+        boolean canOpenAct = false;
+        //  Can use this method to determine if we can open an account or not
+        // Does it already exist/etc. --> look thru transactionmgr.java in proj 2 for requirements
+        String fname = openFname.getText();
+        String lname = openLname.getText();
+
+        LocalDate dob = openDOB.getValue();
+        int day = dob.getDayOfMonth();
+        int month = dob.getMonthValue();
+        int year = dob.getYear();
+
+        return canOpenAct;
+    }
+
+    @FXML
+    private void openingAccount(ActionEvent event, boolean isValidProfile){
+        String fname = openFname.getText();
+        String lname = openLname.getText();
+
+        LocalDate dob = openDOB.getValue();
+        int day = dob.getDayOfMonth();
+        int month = dob.getMonthValue();
+        int year = dob.getYear();
+
+        String initialDeposit = openAmt.getText();
+        int depositAmt = Integer.parseInt(initialDeposit);
+
+        if (openC.isSelected()){
+            // Do checking stuff
+        } else if (openCC.isSelected()){
+
+            if (openCCNB.isSelected()){
+                // New Brunswick account
+            } else if (openCCCamden.isSelected()){
+                // Camden account
+            } else if (openCCNewark.isSelected()){
+                // Newark account
+            }
+
+            // Do collegechecking stuff
+        } else if (openS.isSelected()){
+            if (openSLoyal.isSelected()){
+                // Account holder is loyal
+            }
+            // Do savings stuff
+        } else if (openMM.isSelected()){
+            // Do moneymarket stuff
+        }
+
+        // Add code to open the account here
+        // Will also need to add code to check if all the inputs are valid
+
+    }
+
+    // Close Account Methods
+
+    // Deposit Account Methods
+
+    // Withdraw Account Methods
+
+    // Account Database Methods
 
 
 
