@@ -106,7 +106,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="409.0" prefWidth="602.0">
                      <children>
-                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Print Account Databse" />
+                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Print Account Database" />
                         <Button layoutX="14.0" layoutY="52.0" mnemonicParsing="false" text="Print Interests/Fees" />
                         <Button layoutX="14.0" layoutY="92.0" mnemonicParsing="false" text="Update Account Balances" />
                         <TextArea editable="false" layoutX="14.0" layoutY="136.0" prefHeight="200.0" prefWidth="575.0" wrapText="true" />
