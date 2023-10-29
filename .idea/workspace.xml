@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b965aaa-b4ba-4a76-8fa9-152f5901b1a0" name="Changes" comment="Final Edits to GUI">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="1b965aaa-b4ba-4a76-8fa9-152f5901b1a0" name="Changes" comment="Added files from project 2 to directory">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/TransactionManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/TransactionManagerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/rubankgui/TransactionManagerView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/rubankgui/TransactionManagerView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,10 +43,15 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "deshna__edits",
-    "last_opened_file_path": "C:/Users/deshn/Documents/DD School Lenovo/Documents/IntelliJ/RUBankGUI",
+    "last_opened_file_path": "C:/Users/deshn/Documents/DD School Lenovo/Documents/IntelliJ/RUBankGUI/src/main/java/com/example/rubankgui",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\deshn\Documents\DD School Lenovo\Documents\IntelliJ\RUBankGUI\src\main\java\com\example\rubankgui" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
@@ -115,7 +121,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698579670987</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added files from project 2 to directory">
+      <option name="closed" value="true" />
+      <created>1698617255399</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1698617255399</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -146,7 +160,8 @@
     <MESSAGE value="Testing push/commit from my unbroken laptop" />
     <MESSAGE value="I accidentally started editing master for scene builder, but it's okay!" />
     <MESSAGE value="Final Edits to GUI" />
-    <option name="LAST_COMMIT_MESSAGE" value="Final Edits to GUI" />
+    <MESSAGE value="Added files from project 2 to directory" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added files from project 2 to directory" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
