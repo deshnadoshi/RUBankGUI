@@ -7,7 +7,7 @@
    <children>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Open/Close">
+          <Tab text="Open">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -16,11 +16,26 @@
                               <TextField layoutX="14.0" layoutY="14.0" promptText="First Name" />
                               <TextField layoutX="14.0" layoutY="50.0" promptText="Last Name" />
                               <DatePicker layoutX="14.0" layoutY="84.0" promptText="Date of Birth" />
+                              <TextField layoutX="214.0" layoutY="14.0" promptText="Initial Deposit" />
                            </children>
                         </Pane>
                      </children></AnchorPane>
             </content>
           </Tab>
+          <Tab text="Close">
+                <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                        <children>
+                            <Pane prefHeight="168.0" prefWidth="602.0">
+                                <children>
+                                    <TextField layoutX="14.0" layoutY="14.0" promptText="First Name" />
+                                    <TextField layoutX="14.0" layoutY="50.0" promptText="Last Name" />
+                                    <DatePicker layoutX="14.0" layoutY="84.0" promptText="Date of Birth" />
+                                </children>
+                            </Pane>
+                        </children></AnchorPane>
+                </content>
+            </Tab>
           <Tab text="Deposit/Withdraw">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
