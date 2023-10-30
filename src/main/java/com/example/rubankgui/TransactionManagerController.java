@@ -34,88 +34,72 @@ public class TransactionManagerController {
     private RadioButton openMM;
     @FXML
     private Button openSubmit;
+    @FXML
+    private TextArea openResult;
 
     // "Close" Tab GUI Components
     @FXML
     private TextField closeFname;
-
     @FXML
     private TextField closeLname;
-
     @FXML
     private DatePicker closeDOB;
-
     @FXML
     private RadioButton closeC;
-
     @FXML
     private RadioButton closeCC;
-
     @FXML
     private RadioButton closeS;
-
     @FXML
     private RadioButton closeMM;
-
     @FXML
     private Button closeSubmit;
+    @FXML
+    private TextArea closeResult;
 
     // "Deposit" Tab GUI Components
     @FXML
     private TextField depFname;
-
     @FXML
     private TextField depLname;
-
     @FXML
     private DatePicker depDOB;
-
     @FXML
     private RadioButton depC;
-
     @FXML
     private RadioButton depCC;
-
     @FXML
     private RadioButton depS;
-
     @FXML
     private RadioButton depMM;
-
     @FXML
     private TextField depAmt;
-
     @FXML
     private Button depSubmit;
+    @FXML
+    private TextArea depResult;
 
     // "Withdraw" Tab GUI Components
     @FXML
     private TextField withFname;
-
     @FXML
     private TextField withLname;
-
     @FXML
     private DatePicker withDOB;
-
     @FXML
     private RadioButton withC;
-
     @FXML
     private RadioButton withCC;
-
     @FXML
     private RadioButton withS;
-
     @FXML
     private RadioButton withMM;
-
     @FXML
     private TextField withAmt;
-
     @FXML
     private Button withSubmit;
-
+    @FXML
+    private TextArea withResult;
     // "Account Database" Tab GUI Components
 
     @FXML
@@ -163,7 +147,7 @@ public class TransactionManagerController {
     }
 
     @FXML
-    private void openingAccount(ActionEvent event, boolean isValidProfile){
+    private void openingAccount(ActionEvent event){
         String fname = openFname.getText();
         String lname = openLname.getText();
 
@@ -174,6 +158,7 @@ public class TransactionManagerController {
 
         String initialDeposit = openAmt.getText();
         int depositAmt = Integer.parseInt(initialDeposit);
+
 
         if (openC.isSelected()){
             // Do checking stuff
@@ -199,6 +184,19 @@ public class TransactionManagerController {
 
         // Add code to open the account here
         // Will also need to add code to check if all the inputs are valid
+        boolean acctOpened = false;
+        boolean isValidProfile = false;
+
+        if (openSubmit.isPressed()) {
+            if (acctOpened) {
+                openResult.appendText("Account successfully opened.");
+            } else if (!acctOpened) {
+                openResult.appendText("Failed to open account.");
+                if (!isValidProfile) {
+                    openResult.appendText("Invalid profile ");
+                }
+            }
+        }
 
     }
 
