@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b965aaa-b4ba-4a76-8fa9-152f5901b1a0" name="Changes" comment="Closing account completed!">
+    <list default="true" id="1b965aaa-b4ba-4a76-8fa9-152f5901b1a0" name="Changes" comment="Deposit/Withdraw methods/Gui connection completed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/AccountDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/AccountDatabase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/TransactionManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/TransactionManagerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/rubankgui/TransactionManagerView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/rubankgui/TransactionManagerView.fxml" afterDir="false" />
     </list>
@@ -180,7 +181,23 @@
       <option name="project" value="LOCAL" />
       <updated>1698802272328</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Deposit/Withdraw methods/Gui connection completed">
+      <option name="closed" value="true" />
+      <created>1698851673024</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1698851673024</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Deposit/Withdraw methods/Gui connection completed">
+      <option name="closed" value="true" />
+      <created>1698851764655</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1698851764655</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -218,7 +235,8 @@
     <MESSAGE value="Opening account completed!" />
     <MESSAGE value="Opening C, CC, MM, S completed (for real this time)!" />
     <MESSAGE value="Closing account completed!" />
-    <option name="LAST_COMMIT_MESSAGE" value="Closing account completed!" />
+    <MESSAGE value="Deposit/Withdraw methods/Gui connection completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deposit/Withdraw methods/Gui connection completed" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -653,7 +653,20 @@ public class TransactionManagerController {
     }
 
     // Account Database Methods
+    @FXML
+    private void printAll(ActionEvent event){
 
+    }
+
+    @FXML
+    private void printIF(ActionEvent event){
+
+    }
+
+    @FXML
+    private void printUB(ActionEvent event){
+        actDBShow.setText(actDb.printUpdatedBalances());
+    }
 
 
 
