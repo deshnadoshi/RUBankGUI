@@ -67,6 +67,8 @@ public class TransactionManagerController {
     private Button closeSubmit;
     @FXML
     private TextArea closeResult;
+    @FXML
+    private ToggleGroup CloseAccount;
 
     // "Deposit" Tab GUI Components
     @FXML
@@ -194,10 +196,10 @@ public class TransactionManagerController {
             String actTypeFXID = actTypeButton.getId();
 
             Date birthday = new Date(year, month, day);
-            if (!checkDate(birthday, actTypeFXID).equals("T")){
+            if (!checkDate(birthday, actNameOpen(actTypeFXID)).equals("T")){
                 // If the birthday is not valid
                 openActDOB = false;
-                openResult.setText(checkDate(birthday, actTypeFXID));
+                openResult.setText(checkDate(birthday, actNameOpen(actTypeFXID)));
             }
 
             // Checking if the initial amount is valid
@@ -215,13 +217,13 @@ public class TransactionManagerController {
             }
 
             if (!openActAmt || !openActDOB){
-                resetAllOpen();
+                resetAllOpen(); // This needs to stay outside of the above if-statements, otherwise there's a NullPointExcep
             }
 
             if (openActDOB && openActAmt){
                 // Can open the account
                 openResult.clear();
-                String actName = actName(actTypeFXID); // Tells us the type of account to open
+                String actName = actNameOpen(actTypeFXID); // Tells us the type of account to open
                 if (actName.equals("C")){
                     Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
                     Account add = new Checking(holder, Integer.parseInt(openAmt.getText()));
@@ -271,6 +273,126 @@ public class TransactionManagerController {
 
     }
 
+
+    // Close Account Methods
+    @FXML
+    private void closingAccount(ActionEvent event){
+        boolean fnameValid = true;
+        boolean lnameValid = true;
+        boolean dobValid = true;
+        boolean actValid = true;
+
+        boolean closeActDOB = true; // Checking for input validity.
+
+        if (closeFname.getText().isBlank()){
+            fnameValid = false; // First name field is empty.
+            openResult.setText("Missing data for closing an account.");
+            resetAllClose();
+        }
+        if (closeLname.getText().isBlank()){
+            lnameValid = false; // Last name field is empty.
+            closeResult.setText("Missing data for closing an account.");
+            resetAllClose();
+        }
+
+        if (closeDOB.getValue() == null){
+            dobValid = false;
+            closeResult.setText("Missing data for closing an account.");
+            resetAllClose();
+        }
+
+        // If no account type is selected, then you can't close an account.
+        if (CloseAccount.getSelectedToggle() == null){
+            actValid = false;
+            closeResult.setText("Missing data for closing an account.");
+            resetAllClose();
+        }
+
+        if (fnameValid && lnameValid && dobValid && actValid){
+            LocalDate dob = closeDOB.getValue();
+            int day = dob.getDayOfMonth();
+            int month = dob.getMonthValue();
+            int year = dob.getYear();
+
+            RadioButton actTypeButton = (RadioButton) CloseAccount.getSelectedToggle();
+            String actTypeFXID = actTypeButton.getId();
+
+            Date birthday = new Date(year, month, day);
+            if (!checkDate(birthday, actNameClose(actTypeFXID)).equals("T")){
+                // If the birthday is not valid
+                closeActDOB = false;
+                closeResult.setText(checkDate(birthday, actNameClose(actTypeFXID)));
+            }
+
+            if (!closeActDOB){
+                resetAllClose();
+            }
+
+            if (closeActDOB){
+                closeResult.clear();
+                String actName = actNameClose(actTypeFXID); // Tells us the type of account to open
+                if (actName.equals("C")){
+                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                    Account add = new Checking(holder, 0);
+                    if (actDb.close(add)){
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
+                    } else {
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+
+                } else if (actName.equals("CC")){
+                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                    Account add = new CollegeChecking(holder, 0, Campus.NEWARK);
+                    if (actDb.close(add)){
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
+                    } else {
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+                } else if (actName.equals("S")){
+                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                    Account add = new Savings(holder, 0, true);
+                    if (actDb.close(add)){
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
+                    } else {
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+                } else if (actName.equals("MM")){
+                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                    Account add = new MoneyMarket(holder, 0, true, 0);
+                    if (actDb.close(add)){
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
+                    } else {
+                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+                }
+            }
+
+        }
+    }
+
+    // Deposit Account Methods
+
+    // Withdraw Account Methods
+
+    // Account Database Methods
+
+
+
+
+
+
+
+
+
+    // General Methods
     /**
      * Determine the type of campus based on the fxid of the selected button.
      * @param fxidVal String of the fxid of the selected button.
@@ -303,7 +425,7 @@ public class TransactionManagerController {
      * @param fxidVal String of the fxid of the selected button.
      * @return String of the type of account.
      */
-    private String actName(String fxidVal){
+    private String actNameOpen(String fxidVal){
         switch (fxidVal) {
             case "openC" -> {
                 return "C";
@@ -322,6 +444,29 @@ public class TransactionManagerController {
     }
 
     /**
+     * Determine the type of account based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return String of the type of account.
+     */
+    private String actNameClose(String fxidVal){
+        switch (fxidVal) {
+            case "closeC" -> {
+                return "C";
+            }
+            case "closeCC" -> {
+                return "CC";
+            }
+            case "closeS" -> {
+                return "S";
+            }
+            case "closeMM" -> {
+                return "MM";
+            }
+        }
+        return "NA";
+    }
+
+    /**
      * Resets all the fields in the Open tab.
      */
     private void resetAllOpen(){
@@ -332,6 +477,16 @@ public class TransactionManagerController {
         openSLoyal.setSelected(false);
         Account.getToggles().forEach(toggle -> toggle.setSelected(false));
         CampusName.getToggles().forEach(toggle -> toggle.setSelected(false));
+    }
+
+    /**
+     * Resets all the fields in the Close tab.
+     */
+    private void resetAllClose(){
+        closeFname.clear();
+        closeLname.clear();
+        closeDOB.setValue(null);
+        CloseAccount.getToggles().forEach(toggle -> toggle.setSelected(false));
     }
 
     /**
@@ -395,13 +550,6 @@ public class TransactionManagerController {
         return "T"; // Return statement when all the input is correct
     }
 
-    // Close Account Methods
-
-    // Deposit Account Methods
-
-    // Withdraw Account Methods
-
-    // Account Database Methods
 
 
 
