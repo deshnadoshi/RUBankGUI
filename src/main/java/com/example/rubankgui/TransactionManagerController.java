@@ -655,12 +655,12 @@ public class TransactionManagerController {
     // Account Database Methods
     @FXML
     private void printAll(ActionEvent event){
-
+        actDBShow.setText(actDb.printSorted());
     }
 
     @FXML
     private void printIF(ActionEvent event){
-
+        actDBShow.setText(actDb.printFeesAndInterests());
     }
 
     @FXML
