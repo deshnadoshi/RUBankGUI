@@ -90,7 +90,9 @@ public class TransactionManagerController {
     @FXML
     private Button depSubmit;
     @FXML
-    private TextArea depResult;
+    private TextArea depositResult;
+    @FXML
+    private ToggleGroup DepositAccount;
 
     // "Withdraw" Tab GUI Components
     @FXML
@@ -113,6 +115,9 @@ public class TransactionManagerController {
     private Button withSubmit;
     @FXML
     private TextArea withResult;
+    @FXML
+    private ToggleGroup WithdrawAccount;
+
     // "Account Database" Tab GUI Components
 
     @FXML
@@ -273,7 +278,6 @@ public class TransactionManagerController {
 
     }
 
-
     // Close Account Methods
     @FXML
     private void closingAccount(ActionEvent event){
@@ -379,8 +383,274 @@ public class TransactionManagerController {
     }
 
     // Deposit Account Methods
+    @FXML
+    private void depositAccount(ActionEvent event){
+        boolean fnameValid = true;
+        boolean lnameValid = true;
+        boolean dobValid = true;
+        boolean actValid = true;
+
+        boolean depActDOB = true; // Checking for input validity.
+        boolean depActAmt = true; // Checking for input validity
+
+        if (depFname.getText().isBlank()){
+            fnameValid = false; // First name field is empty.
+            depositResult.setText("Missing data for making deposit in account.");
+            resetAllDep();
+        }
+        if (depLname.getText().isBlank()){
+            lnameValid = false; // Last name field is empty.
+            depositResult.setText("Missing data for making deposit in account.");
+            resetAllDep();
+        }
+        if (depDOB.getValue() == null){
+            dobValid = false;
+            depositResult.setText("Missing data for making deposit in account.");
+            resetAllDep();
+        }
+        if (DepositAccount.getSelectedToggle() == null){
+            actValid = false;
+            depositResult.setText("Missing data for making deposit in account.");
+            resetAllDep();
+        }
+
+        if (fnameValid && lnameValid && dobValid && actValid){
+            LocalDate dob = depDOB.getValue();
+            int day = dob.getDayOfMonth();
+            int month = dob.getMonthValue();
+            int year = dob.getYear();
+
+            RadioButton actTypeButton = (RadioButton) DepositAccount.getSelectedToggle();
+            String actTypeFXID = actTypeButton.getId();
+
+            Date birthday = new Date(year, month, day);
+            if (!checkDate(birthday, actNameDep(actTypeFXID)).equals("T")){
+                // If the birthday is not valid
+                depActDOB = false;
+                depositResult.setText(checkDate(birthday, actNameDep(actTypeFXID)));
+            }
+
+            String initialDeposit = depAmt.getText();
+            if (initialDeposit.matches("-?\\d*")) {
+                int openAmount = Integer.parseInt(initialDeposit);
+                if (openAmount <= 0){
+                    depActAmt = false;
+                    depositResult.setText("Deposit - amount cannot be 0 or negative.");
+                }
+            } else {
+                depActAmt = false;
+                depositResult.setText("Not a valid amount.");
+            }
+
+            if (!depActDOB || !depActAmt){
+                resetAllDep();
+            }
+
+            if (depActDOB && depActAmt){
+                depositResult.clear();
+                String actName = actNameDep(actTypeFXID); // Tells us the type of account to open
+
+                if (actName.equals("C")){
+                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                    Account dep = new Checking(holder, Integer.parseInt(initialDeposit));
+
+                    if (!actDb.depositNotFound(dep)){
+                        actDb.deposit(dep);
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
+                    } else {
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+
+                } else if (actName.equals("CC")){
+                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                    Account dep = new CollegeChecking(holder, Integer.parseInt(initialDeposit), Campus.NEWARK);
+
+                    if (!actDb.depositNotFound(dep)){
+                        actDb.deposit(dep);
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
+                    } else {
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+                } else if (actName.equals("S")){
+                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                    Account dep = new Savings(holder, Integer.parseInt(initialDeposit), true);
+
+                    if (!actDb.depositNotFound(dep)){
+                        actDb.deposit(dep);
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
+                    } else {
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+                } else if (actName.equals("MM")){
+                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                    Account dep = new MoneyMarket(holder, Integer.parseInt(initialDeposit), true, 0);
+
+                    if (!actDb.depositNotFound(dep)){
+                        actDb.deposit(dep);
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
+                    } else {
+                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                                "(" + actName + ") " + "is not in the database.");
+                    }
+                }
+            }
+
+        }
+    }
 
     // Withdraw Account Methods
+    @FXML
+    private void withdrawAccount(ActionEvent event){
+        boolean fnameValid = true;
+        boolean lnameValid = true;
+        boolean dobValid = true;
+        boolean actValid = true;
+
+        boolean withActDOB = true; // Checking for input validity.
+        boolean withActAmt = true; // Checking for input validity
+
+        if (withFname.getText().isBlank()){
+            fnameValid = false; // First name field is empty.
+            withResult.setText("Missing data for withdrawing from account.");
+            resetAllWith();
+        }
+        if (withLname.getText().isBlank()){
+            lnameValid = false; // Last name field is empty.
+            withResult.setText("Missing data for withdrawing from account.");
+            resetAllWith();
+        }
+        if (withDOB.getValue() == null){
+            dobValid = false;
+            withResult.setText("Missing data for withdrawing from account.");
+            resetAllWith();
+        }
+        if (WithdrawAccount.getSelectedToggle() == null){
+            actValid = false;
+            withResult.setText("Missing data for withdrawing from account.");
+            resetAllWith();
+        }
+
+        if (fnameValid && lnameValid && dobValid && actValid){
+            LocalDate dob = withDOB.getValue();
+            int day = dob.getDayOfMonth();
+            int month = dob.getMonthValue();
+            int year = dob.getYear();
+
+            RadioButton actTypeButton = (RadioButton) WithdrawAccount.getSelectedToggle();
+            String actTypeFXID = actTypeButton.getId();
+
+            Date birthday = new Date(year, month, day);
+            if (!checkDate(birthday, actNameWith(actTypeFXID)).equals("T")){
+                // If the birthday is not valid
+                withActDOB = false;
+                withResult.setText(checkDate(birthday, actNameWith(actTypeFXID)));
+            }
+
+            String initWith = withAmt.getText();
+            if (initWith.matches("-?\\d*")) {
+                int wdrawAmount = Integer.parseInt(initWith);
+                if (wdrawAmount <= 0){
+                    withActAmt = false;
+                    withResult.setText("Withdraw - amount cannot be 0 or negative.");
+                }
+            } else {
+                withActAmt = false;
+                withResult.setText("Not a valid amount.");
+            }
+
+            if (!withActDOB || !withActAmt){
+                resetAllWith();
+            }
+
+            if (withActDOB && withActAmt){
+                withResult.clear();
+                String actName = actNameWith(actTypeFXID); // Tells us the type of account to open
+
+                if (actName.equals("C")){
+                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                    Account with = new Checking(holder, Integer.parseInt(initWith));
+
+                    if (actDb.contains(with)){
+                        if (actDb.withdraw(with)){
+                            actDb.deposit(with);
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
+                        } else {
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
+                        }
+
+                    } else {
+                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                "(" + actName + ") " + " is not in the database.");
+                    }
+
+                } else if (actName.equals("CC")){
+                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                    Account with = new CollegeChecking(holder, Integer.parseInt(initWith), Campus.NEWARK);
+
+                    if (actDb.contains(with)){
+                        if (actDb.withdraw(with)){
+                            actDb.deposit(with);
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
+                        } else {
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
+                        }
+
+                    } else {
+                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                "(" + actName + ") " + " is not in the database.");
+                    }
+                } else if (actName.equals("S")){
+                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                    Account with = new Savings(holder, Integer.parseInt(initWith), true);
+
+                    if (actDb.contains(with)){
+                        if (actDb.withdraw(with)){
+                            actDb.deposit(with);
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
+                        } else {
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
+                        }
+
+                    } else {
+                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                "(" + actName + ") " + " is not in the database.");
+                    }
+                } else if (actName.equals("MM")){
+                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                    Account with = new MoneyMarket(holder, Integer.parseInt(initWith), true, 0);
+
+                    if (actDb.contains(with)){
+                        if (actDb.withdraw(with)){
+                            actDb.deposit(with);
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
+                        } else {
+                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
+                        }
+
+                    } else {
+                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                                "(" + actName + ") " + " is not in the database.");
+                    }
+                }
+            }
+
+        }
+    }
 
     // Account Database Methods
 
@@ -393,6 +663,8 @@ public class TransactionManagerController {
 
 
     // General Methods
+
+
     /**
      * Determine the type of campus based on the fxid of the selected button.
      * @param fxidVal String of the fxid of the selected button.
@@ -466,6 +738,42 @@ public class TransactionManagerController {
         return "NA";
     }
 
+    private String actNameDep(String fxidVal){
+        switch (fxidVal) {
+            case "depC" -> {
+                return "C";
+            }
+            case "depCC" -> {
+                return "CC";
+            }
+            case "depS" -> {
+                return "S";
+            }
+            case "depMM" -> {
+                return "MM";
+            }
+        }
+        return "NA";
+    }
+
+    private String actNameWith(String fxidVal){
+        switch (fxidVal) {
+            case "withC" -> {
+                return "C";
+            }
+            case "withCC" -> {
+                return "CC";
+            }
+            case "withS" -> {
+                return "S";
+            }
+            case "withMM" -> {
+                return "MM";
+            }
+        }
+        return "NA";
+    }
+
     /**
      * Resets all the fields in the Open tab.
      */
@@ -487,6 +795,28 @@ public class TransactionManagerController {
         closeLname.clear();
         closeDOB.setValue(null);
         CloseAccount.getToggles().forEach(toggle -> toggle.setSelected(false));
+    }
+
+    /**
+     * Resets all the fields in the Deposit tab.
+     */
+    private void resetAllDep(){
+        depFname.clear();
+        depLname.clear();
+        depDOB.setValue(null);
+        depAmt.clear();
+        DepositAccount.getToggles().forEach(toggle -> toggle.setSelected(false));
+    }
+
+    /**
+     * Resets all the fields in the Withdraw tab.
+     */
+    private void resetAllWith(){
+        withFname.clear();
+        withLname.clear();
+        withDOB.setValue(null);
+        withAmt.clear();
+        WithdrawAccount.getToggles().forEach(toggle -> toggle.setSelected(false));
     }
 
     /**
