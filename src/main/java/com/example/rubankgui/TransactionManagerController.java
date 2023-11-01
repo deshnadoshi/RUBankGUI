@@ -664,7 +664,6 @@ public class TransactionManagerController {
 
     // General Methods
 
-
     /**
      * Determine the type of campus based on the fxid of the selected button.
      * @param fxidVal String of the fxid of the selected button.

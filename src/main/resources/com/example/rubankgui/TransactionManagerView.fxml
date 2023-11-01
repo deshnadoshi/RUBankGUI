@@ -34,7 +34,7 @@
                               <CheckBox fx:id="openSLoyal" layoutX="443.0" layoutY="162.0" mnemonicParsing="false" text="Loyal" />
                               <RadioButton fx:id="openMM" layoutX="418.0" layoutY="198.0" mnemonicParsing="false" text="Money Market" toggleGroup="$Account" />
                               <Button fx:id="openSubmit" layoutX="265.0" layoutY="257.0" mnemonicParsing="false" onAction="#openingAccount" text="OPEN" textAlignment="CENTER" />
-                              <TextArea fx:id="openResult" editable="false" layoutX="147.0" layoutY="304.0" prefHeight="67.0" prefWidth="283.0" />
+                              <TextArea fx:id="openResult" editable="false" layoutX="147.0" layoutY="304.0" prefHeight="67.0" prefWidth="418.0" />
                            </children>
                         </Pane>
                      </children></AnchorPane>
