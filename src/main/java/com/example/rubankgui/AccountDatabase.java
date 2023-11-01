@@ -172,7 +172,7 @@ public class AccountDatabase {
             for (int i = 0; i < numAcct; i++) {
                 retString += ("\n" + sortedArray[i].netBalanceToString());
             }
-            System.out.println("\n*end of list.\n");
+            retString += ("\n*end of list.\n");
         }
         return retString;
     }
