@@ -46,7 +46,7 @@ public class TransactionManagerController {
     private ToggleGroup Account;
 
     @FXML
-    private ToggleGroup Campus;
+    private ToggleGroup CampusName;
 
     // "Close" Tab GUI Components
     @FXML
@@ -175,7 +175,7 @@ public class TransactionManagerController {
             String actTypeFXID = actTypeButton.getId(); // FXID of the type of account selected
 
             if (actTypeFXID.equals("openCC")){
-                if (Campus.getSelectedToggle() == null){
+                if (CampusName.getSelectedToggle() == null){
                     campusValid = false;
                     openResult.setText("Invalid campus code.");
                     resetAllOpen();
@@ -233,15 +233,76 @@ public class TransactionManagerController {
                                 "(" + actName + ") " + "is already in the database.");
                     }
 
+                } else if (actName.equals("CC")){
+                    RadioButton campusTypeButton = (RadioButton) CampusName.getSelectedToggle();
+                    String campusTypeFXID = actTypeButton.getId();
+                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                    Account add = new CollegeChecking(holder, Integer.parseInt(openAmt.getText()), ccCampus(campusTypeFXID));
+                    if (actDb.open(add)){
+                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
+                    } else {
+                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is already in the database.");
+                    }
+                } else if (actName.equals("S")){
+                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                    Account add = new Savings(holder, Integer.parseInt(openAmt.getText()), openSLoyal.isSelected());
+                    if (actDb.open(add)){
+                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
+                    } else {
+                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is already in the database.");
+                    }
+                } else if (actName.equals("MM")){
+                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                    Account add = new MoneyMarket(holder, Integer.parseInt(openAmt.getText()), true, 0);
+                    if (actDb.open(add)){
+                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
+                    } else {
+                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                                "(" + actName + ") " + "is already in the database.");
+                    }
                 }
             }
-
-
-
         }
 
     }
 
+    /**
+     * Determine the type of campus based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return Campus object of the type of campus.
+     */
+    private Campus ccCampus(String fxidVal){
+        Campus campus = Campus.NEWARK;
+
+        String campusToStr = "";
+        if (fxidVal.equals("openCCCamden")){
+            campusToStr = "CAMDEN";
+        } else if (fxidVal.equals("openCCNB")){
+            campusToStr = "NEW_BRUNSWICK";
+        }  else if (fxidVal.equals("openCCNewark")){
+            campusToStr = "NEWARK";
+        }
+
+        for (Campus check: Campus.values()) {
+            if (check.toString().equals(campusToStr)) {
+                campus = check;
+            }
+        }
+
+        return campus;
+
+    }
+
+    /**
+     * Determine the type of account based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return String of the type of account.
+     */
     private String actName(String fxidVal){
         switch (fxidVal) {
             case "openC" -> {
@@ -260,6 +321,9 @@ public class TransactionManagerController {
         return "NA";
     }
 
+    /**
+     * Resets all the fields in the Open tab.
+     */
     private void resetAllOpen(){
         openFname.clear();
         openLname.clear();
@@ -267,7 +331,7 @@ public class TransactionManagerController {
         openAmt.clear();
         openSLoyal.setSelected(false);
         Account.getToggles().forEach(toggle -> toggle.setSelected(false));
-        Campus.getToggles().forEach(toggle -> toggle.setSelected(false));
+        CampusName.getToggles().forEach(toggle -> toggle.setSelected(false));
     }
 
     /**

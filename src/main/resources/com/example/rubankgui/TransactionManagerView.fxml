@@ -25,11 +25,11 @@
                               <RadioButton fx:id="openCC" layoutX="418.0" layoutY="42.0" mnemonicParsing="false" onAction="#initializeOpenCC" text="College Checking" toggleGroup="$Account" />
                               <RadioButton fx:id="openCCNB" layoutX="453.0" layoutY="66.0" mnemonicParsing="false" text="NB">
                                  <toggleGroup>
-                                    <ToggleGroup fx:id="Campus" />
+                                    <ToggleGroup fx:id="CampusName" />
                                  </toggleGroup>
                               </RadioButton>
-                              <RadioButton fx:id="openCCNewark" layoutX="453.0" layoutY="88.0" mnemonicParsing="false" text="Newark" toggleGroup="$Campus" />
-                              <RadioButton fx:id="openCCCamden" layoutX="453.0" layoutY="109.0" mnemonicParsing="false" text="Camden" toggleGroup="$Campus" />
+                              <RadioButton fx:id="openCCNewark" layoutX="453.0" layoutY="88.0" mnemonicParsing="false" text="Newark" toggleGroup="$CampusName" />
+                              <RadioButton fx:id="openCCCamden" layoutX="453.0" layoutY="109.0" mnemonicParsing="false" text="Camden" toggleGroup="$CampusName" />
                               <RadioButton fx:id="openS" layoutX="418.0" layoutY="138.0" mnemonicParsing="false" onAction="#initializeOpenS" text="Savings" toggleGroup="$Account" />
                               <CheckBox fx:id="openSLoyal" layoutX="443.0" layoutY="162.0" mnemonicParsing="false" text="Loyal" />
                               <RadioButton fx:id="openMM" layoutX="418.0" layoutY="198.0" mnemonicParsing="false" text="Money Market" toggleGroup="$Account" />
