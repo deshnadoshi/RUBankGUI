@@ -143,34 +143,38 @@ public class AccountDatabase {
      * Prints out accounts sorted by account types, then last name,
      * then first name, then DOB.
      */
-    public void printSorted() {
-        if (numAcct == 0) System.out.println("Account Database is empty!");
+    public String printSorted() {
+        String retString = "";
+        if (numAcct == 0) return ("Account Database is empty!");
         else {
             Account[] sortedArray = arrayForSorting(accounts);
             quickSort(sortedArray, 0, sortedArray.length - 1);
-            System.out.println("\n*Accounts sorted by account type and profile.");
+            retString += ("\n*Accounts sorted by account type and profile.");
             for (int i = 0; i < numAcct; i++) {
-                System.out.println(sortedArray[i]);
+                retString += ("\n" + sortedArray[i]);
             }
-            System.out.println("*end of list.\n");
+            retString += ("*end of list.\n");
         }
+        return retString;
     }
 
     /**
      * Prints out accounts sorted by account type, and displays calculated
      * fees and monthly interest based on current account balances.
      */
-    public void printFeesAndInterests() {
-        if (numAcct == 0) System.out.println("Account Database is empty!");
+    public String printFeesAndInterests() {
+        String retString = "";
+        if (numAcct == 0) return ("Account Database is empty!");
         else {
             Account[] sortedArray = arrayForSorting(accounts);
             quickSort(sortedArray, 0, sortedArray.length - 1);
-            System.out.println("\n*list of accounts with fee and monthly interest");
+            retString += ("\n*list of accounts with fee and monthly interest\n");
             for (int i = 0; i < numAcct; i++) {
-                System.out.println(sortedArray[i].netBalanceToString());
+                retString += ("\n" + sortedArray[i].netBalanceToString());
             }
-            System.out.println("*end of list.\n");
+            retString += ("\n*end of list.\n");
         }
+        return retString;
     }
 
     /**
@@ -178,21 +182,26 @@ public class AccountDatabase {
      * by adding fees and interest. Also resets withdrawals for MM.
      * Acts like one month has passed.
      */
-    public void printUpdatedBalances() {
-        if (numAcct == 0) System.out.println("Account Database is empty!");
+    public String printUpdatedBalances() {
+        String retString = "";
+
+        if (numAcct == 0) return("Account Database is empty!");
         else {
             Account[] sortedArray = arrayForSorting(accounts);
             quickSort(sortedArray, 0, sortedArray.length - 1);
-            System.out.println("\n*list of accounts with fees and interests applied.");
+
+            retString += "\n*list of accounts with fees and interests applied.\n";
             for (int i = 0; i < numAcct; i++) {
                 sortedArray[i].updateBalance();
                 if (sortedArray[i].getClass().equals(MoneyMarket.class)) {
                     ((MoneyMarket) sortedArray[i]).resetWithdrawal();
                 }
-                System.out.println(sortedArray[i]);
+                retString += ("\n" + sortedArray[i]);
             }
-            System.out.println("*end of list.\n");
+            retString += ("\n*end of list.\n");
         }
+
+        return retString;
     }
 
     /**
@@ -306,6 +315,14 @@ public class AccountDatabase {
             MoneyMarket updateMM = (MoneyMarket) updateAcc; // turn into mm object so u can add withdrawal amt
             updateMM.addWithdrawal();
         }
+    }
+
+    /**
+     * Getter for the number of accounts in the database.
+     * @return the number of accounts in the database.
+     */
+    public int getNumAcct(){
+        return numAcct;
     }
 
 }
