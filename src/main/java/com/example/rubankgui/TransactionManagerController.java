@@ -1,11 +1,15 @@
 package com.example.rubankgui;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Calendar;
+import java.util.Scanner;
 
 import java.lang.String;
 import java.time.LocalDate;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.*;
 
 public class TransactionManagerController {
 
@@ -128,6 +132,9 @@ public class TransactionManagerController {
 
     @FXML
     private Button ubPrint;
+
+    @FXML
+    private Button loadAct;
 
     @FXML
     private TextArea actDBShow;
@@ -579,7 +586,7 @@ public class TransactionManagerController {
 
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
-                            actDb.deposit(with);
+                            // actDb.deposit(with);
                             withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
@@ -598,7 +605,7 @@ public class TransactionManagerController {
 
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
-                            actDb.deposit(with);
+                            // actDb.deposit(with);
                             withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
@@ -616,7 +623,7 @@ public class TransactionManagerController {
 
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
-                            actDb.deposit(with);
+                            // actDb.deposit(with);
                             withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
@@ -634,7 +641,7 @@ public class TransactionManagerController {
 
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
-                            actDb.deposit(with);
+                            // actDb.deposit(with);
                             withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
@@ -667,12 +674,6 @@ public class TransactionManagerController {
     private void printUB(ActionEvent event){
         actDBShow.setText(actDb.printUpdatedBalances());
     }
-
-
-
-
-
-
 
 
     // General Methods
@@ -856,6 +857,26 @@ public class TransactionManagerController {
             boolean disable = !newValue;
             openSLoyal.setDisable(disable);
         });
+    }
+
+    @FXML
+    private void loadActs(ActionEvent event) throws FileNotFoundException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File selectedFile = fileChooser.showOpenDialog(null);
+        try {
+            Scanner accountsList = new Scanner(selectedFile);
+            while (accountsList.hasNextLine()) {
+                String newAccount = accountsList.nextLine();
+                actDBShow.appendText(newAccount); // testing
+            }
+        } catch (FileNotFoundException e) {
+            actDBShow.appendText("File not found");
+            //throw new RuntimeException(e);
+        }
+
+        actDBShow.appendText(selectedFile.getName()); // testing if file is successfully opened
+        //if (selectedFile.) // check the file type
     }
 
     /**
