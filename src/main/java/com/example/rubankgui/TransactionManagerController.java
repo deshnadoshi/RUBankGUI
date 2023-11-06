@@ -11,6 +11,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.*;
 
+/**
+ * Controls the GUI components.
+ * @author Deshna Doshi, Haejin Song
+ */
 public class TransactionManagerController {
 
     Account[] allAccounts = new Account[4];
@@ -150,7 +154,10 @@ public class TransactionManagerController {
     private static final int STATUS_IND = 5;
 
 
-    // Open Account Methods
+    /**
+     * Opens an account.
+     * @param event The action of clicking the Open button.
+     */
     @FXML
     private void openingAccount(ActionEvent event){
         boolean openActDOB = true; // Checking for input validity.
@@ -181,7 +188,10 @@ public class TransactionManagerController {
         }
     }
 
-    // Close Account Methods
+    /**
+     * Closes an account.
+     * @param event The action of clicking the Close button.
+     */
     @FXML
     private void closingAccount(ActionEvent event){
         boolean closeActDOB = true; // Checking for input validity.
@@ -215,7 +225,10 @@ public class TransactionManagerController {
         }
     }
 
-    // Deposit Account Methods
+    /**
+     * Deposits to an account.
+     * @param event The action of clicking the Deposit button.
+     */
     @FXML
     private void depositAccount(ActionEvent event){
         boolean valid = checkValidDepositAccount();
@@ -234,8 +247,8 @@ public class TransactionManagerController {
                 depositResult.appendText(checkDate(birthday, actNameDep(actTypeFXID)));
             }
             String initialDeposit = depAmt.getText();
-            if (initialDeposit.matches("-?\\d*")) {
-                int openAmount = Integer.parseInt(initialDeposit);
+            if (initialDeposit.matches("-?\\d+(\\.\\d{1,2})?")) {
+                double openAmount = Double.parseDouble(initialDeposit);
                 if (openAmount <= 0){
                     depActAmt = false;
                     depositResult.appendText("Deposit - amount cannot be 0 or negative.\n");
@@ -257,7 +270,10 @@ public class TransactionManagerController {
         }
     }
 
-    // Withdraw Account Methods
+    /**
+     * Withdraws from an account.
+     * @param event The action of clicking the Withdraw button.
+     */
     @FXML
     private void withdrawAccount(ActionEvent event){
         boolean valid = checkValidWithdrawAccount();
@@ -276,8 +292,8 @@ public class TransactionManagerController {
                 withResult.appendText(checkDate(birthday, actNameWith(actTypeFXID)));
             }
             String initWith = withAmt.getText();
-            if (initWith.matches("-?\\d*")) {
-                int wdrawAmount = Integer.parseInt(initWith);
+            if (initWith.matches("-?\\d+(\\.\\d{1,2})?")) {
+                double wdrawAmount = Double.parseDouble(initWith);
                 if (wdrawAmount <= 0){
                     withActAmt = false;
                     withResult.appendText("Withdraw - amount cannot be 0 or negative.\n");
@@ -293,6 +309,10 @@ public class TransactionManagerController {
                 Account with = makeWithdrawAccount(actName, birthday, initWith);
                 if (actDb.contains(with)) {
                     if (actDb.withdraw(with)) {
+                        if(actNameWith(actTypeFXID).equals("MM")){
+                            actDb.updateWithdraws(with);
+                            actDb.updateLoyalty(with);
+                        }
                         printInfo("withdraw", withResult, with, actName);
                     } else printInfo("insufficient", withResult, with, actName);
                 } else printInfo("not_in_database", withResult, with, actName);
@@ -300,22 +320,37 @@ public class TransactionManagerController {
         }
     }
 
-    // Account Database Methods
+    /**
+     * Prints a sorted list of the account database.
+     * @param event The action of clicking the respective print button.
+     */
     @FXML
     private void printAll(ActionEvent event){
         actDBShow.appendText(actDb.printSorted());
     }
 
+    /**
+     * Prints a sorted list of the interests and feeds.
+     * @param event The action of clicking the respective print button.
+     */
     @FXML
     private void printIF(ActionEvent event){
         actDBShow.appendText(actDb.printFeesAndInterests());
     }
 
+    /**
+     * Prints a sorted list of the updated balances.
+     * @param event The action of clicking the respective print button.
+     */
     @FXML
     private void printUB(ActionEvent event){
         actDBShow.appendText(actDb.printUpdatedBalances());
     }
 
+    /**
+     * Reads data from a file and opens accounts.
+     * @param event The action of clicking the upload button.
+     */
     @FXML
     private void loadActs(ActionEvent event) throws FileNotFoundException {
         FileChooser fileChooser = new FileChooser();
@@ -340,27 +375,40 @@ public class TransactionManagerController {
     }
 
     // Helper Methods
+
+    /**
+     * Opens an account based on the account name and birthday.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @return new Account object.
+     */
     private Account makeOpenAccount(String actName, Date birthday) {
         Account acc = null;
         switch (actName) {
             case "C" -> {
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new Checking(holder, Integer.parseInt(openAmt.getText()));
+                acc = new Checking(holder, Double.parseDouble(openAmt.getText()));
             } case "CC" -> {
                 RadioButton campusTypeButton = (RadioButton) CampusName.getSelectedToggle();
                 String campusTypeFXID = campusTypeButton.getId();
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new CollegeChecking(holder, Integer.parseInt(openAmt.getText()), ccCampus(campusTypeFXID));
+                acc = new CollegeChecking(holder, Double.parseDouble(openAmt.getText()), ccCampus(campusTypeFXID));
             } case "S" -> {
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new Savings(holder, Integer.parseInt(openAmt.getText()), openSLoyal.isSelected());
+                acc = new Savings(holder, Double.parseDouble(openAmt.getText()), openSLoyal.isSelected());
             } case "MM" -> {
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new MoneyMarket(holder, Integer.parseInt(openAmt.getText()), true, 0);
+                acc = new MoneyMarket(holder, Double.parseDouble(openAmt.getText()), true, 0);
             }
         } return acc;
     }
 
+    /**
+     * Makes a shell account to close.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @return new shell Account object.
+     */
     private Account makeCloseAccount(String actName, Date birthday) {
         Account acc = null;
         switch (actName) {
@@ -383,50 +431,71 @@ public class TransactionManagerController {
         } return acc;
     }
 
+    /**
+     * Makes a shell account to deposit.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @param initialDeposit Amount to deposit.
+     * @return new shell Account object.
+     */
     private Account makeDepositAccount(String actName, Date birthday, String initialDeposit) {
         Account dep = null;
         switch (actName) {
             case "C" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new Checking(holder, Integer.parseInt(initialDeposit));
+                dep = new Checking(holder, Double.parseDouble(initialDeposit));
             }
             case "CC" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new CollegeChecking(holder, Integer.parseInt(initialDeposit), Campus.NEWARK);
+                dep = new CollegeChecking(holder, Double.parseDouble(initialDeposit), Campus.NEWARK);
             }
             case "S" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new Savings(holder, Integer.parseInt(initialDeposit), true);
+                dep = new Savings(holder, Double.parseDouble(initialDeposit), true);
             }
             case "MM" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new MoneyMarket(holder, Integer.parseInt(initialDeposit), true, 0);
+                dep = new MoneyMarket(holder, Double.parseDouble(initialDeposit), true, 0);
             }
         } return dep;
     }
 
+    /**
+     * Makes a shell account to withdraw.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @param initWith Amount to withdraw.
+     * @return new shell Account object.
+     */
     private Account makeWithdrawAccount(String actName, Date birthday, String initWith) {
         Account with = null;
         switch (actName) {
             case "C" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new Checking(holder, Integer.parseInt(initWith));
+                with = new Checking(holder, Double.parseDouble(initWith));
             }
             case "CC" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new CollegeChecking(holder, Integer.parseInt(initWith), Campus.NEWARK);
+                with = new CollegeChecking(holder, Double.parseDouble(initWith), Campus.NEWARK);
             }
             case "S" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new Savings(holder, Integer.parseInt(initWith), true);
+                with = new Savings(holder, Double.parseDouble(initWith), true);
             }
             case "MM" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new MoneyMarket(holder, Integer.parseInt(initWith), true, 0);
+                with = new MoneyMarket(holder, Double.parseDouble(initWith), true, 0);
             }
         } return with;
     }
 
+    /**
+     * Print most recent action to the TextArea.
+     * @param type Action that occured.
+     * @param textarea GUI component to print to.
+     * @param acc Account affected.
+     * @param actName Type of account.
+     */
     private void printInfo(String type, TextArea textarea, Account acc, String actName) {
         switch (type) {
             case "opened" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() +
@@ -447,12 +516,18 @@ public class TransactionManagerController {
                     " " + acc.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
         }
     }
+
+    /**
+     * Determine if entered amount is valid.
+     * @param actType Type of account.
+     * @return true if the amount is valid, false otherwise.
+     */
     private boolean checkValidAmount(String actType) {
         // Checking if the initial amount is valid
         String initialDeposit = openAmt.getText();
-        if (initialDeposit.matches("-?\\d*")) {
+        if (initialDeposit.matches("-?\\d+(\\.\\d{1,2})?")) {
             // String contains only digits
-            int openAmount = Integer.parseInt(initialDeposit);
+            double openAmount = Double.parseDouble(initialDeposit);
             if (openAmount <= 0){
                 openResult.appendText("Initial deposit cannot be 0 or negative.\n");
                 return false;
@@ -467,6 +542,10 @@ public class TransactionManagerController {
         return true;
     }
 
+    /**
+     * Check if any fields are empty in Open tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidOpenAccount() {
         if (openFname.getText().isBlank()){
             openResult.appendText("Missing data for opening an account.\n");
@@ -479,7 +558,7 @@ public class TransactionManagerController {
             return false;
         }
         if (openDOB.getValue() == null){
-            openResult.appendText("Missing data for opening an account.\n");
+            openResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for opening an account.\n");
             resetAllOpen();
             return false;
         }
@@ -506,6 +585,10 @@ public class TransactionManagerController {
         } return true;
     }
 
+    /**
+     * Check if any fields are empty in Close tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidCloseAccount() {
         if (closeFname.getText().isBlank()){
             openResult.appendText("Missing data for closing an account.\n");
@@ -519,7 +602,7 @@ public class TransactionManagerController {
         }
 
         if (closeDOB.getValue() == null){
-            closeResult.appendText("Missing data for closing an account.\n");
+            closeResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for closing an account.\n");
             resetAllClose();
             return false;
         }
@@ -532,6 +615,10 @@ public class TransactionManagerController {
         } return true;
     }
 
+    /**
+     * Check if any fields are empty in Deposit tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidDepositAccount() {
         if (depFname.getText().isBlank()){
             depositResult.appendText("Missing data for making deposit in account.\n");
@@ -544,7 +631,7 @@ public class TransactionManagerController {
             return false;
         }
         if (depDOB.getValue() == null){
-            depositResult.appendText("Missing data for making deposit in account.\n");
+            depositResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for making deposit in account.\n");
             resetAllDep();
             return false;
         }
@@ -555,6 +642,10 @@ public class TransactionManagerController {
         } return true;
     }
 
+    /**
+     * Check if any fields are empty in Withdraw tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidWithdrawAccount() {
         if (withFname.getText().isBlank()){
             withResult.appendText("Missing data for withdrawing from account.\n");
@@ -567,7 +658,7 @@ public class TransactionManagerController {
             return false;
         }
         if (withDOB.getValue() == null){
-            withResult.appendText("Missing data for withdrawing from account.\n");
+            withResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for withdrawing from account.\n");
             resetAllWith();
             return false;
         }
@@ -649,6 +740,11 @@ public class TransactionManagerController {
         return "NA";
     }
 
+    /**
+     * Determine the type of account based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return String of the type of account.
+     */
     private String actNameDep(String fxidVal){
         switch (fxidVal) {
             case "depC" -> {
@@ -667,6 +763,11 @@ public class TransactionManagerController {
         return "NA";
     }
 
+    /**
+     * Determine the type of account based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return String of the type of account.
+     */
     private String actNameWith(String fxidVal){
         switch (fxidVal) {
             case "withC" -> {
@@ -735,7 +836,12 @@ public class TransactionManagerController {
      * @param event The action of choosing a College Checking account.
      */
     @FXML
-    private void initializeOpenCC(ActionEvent event){
+    private void initializeOpenCC(ActionEvent event) {
+        openCCNewark.setDisable(true);
+        openCCNB.setDisable(true);
+        openCCCamden.setDisable(true);
+        openSLoyal.setDisable(true);
+
         openCC.selectedProperty().addListener((observable, oldValue, newValue) -> {
             boolean disable = !newValue;
             openCCNewark.setDisable(disable);
@@ -743,7 +849,29 @@ public class TransactionManagerController {
             openCCCamden.setDisable(disable);
         });
 
+        Account.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                openCCNB.setDisable(true);
+                openCCCamden.setDisable(true);
+                openCCNewark.setDisable(true);
+                openSLoyal.setDisable(true);
+            }
+        });
+
+        boolean disable = !openCC.isSelected();
+        openCCNewark.setDisable(disable);
+        openCCNB.setDisable(disable);
+        openCCCamden.setDisable(disable);
+
+        openS.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            boolean disables = !newValue;
+            openSLoyal.setDisable(disables);
+        });
+
+        boolean disables = !openS.isSelected();
+        openSLoyal.setDisable(disables);
     }
+
 
     /**
      * Checks if Savings account is selected and allows Loyal selection.
@@ -751,12 +879,33 @@ public class TransactionManagerController {
      */
     @FXML
     private void initializeOpenS(ActionEvent event){
+        openSLoyal.setDisable(true);
+        if (openS.isSelected()){
+            openSLoyal.setDisable(false);
+        } else {
+            openS.setDisable(true);
+        }
         openS.selectedProperty().addListener((observable, oldValue, newValue) -> {
             boolean disable = !newValue;
             openSLoyal.setDisable(disable);
         });
+
+        Account.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                openSLoyal.setDisable(true);
+            }
+        });
+
+        boolean disable = !openS.isSelected();
+        openSLoyal.setDisable(disable);
+
     }
 
+    /**
+     * Helper method to open accounts from file.
+     * @param account Array to hold all the accounts.
+     * @return new Account object that was created.
+     */
     private Account makeAccountFromArray(String[] account) {
         String[] parsedBday = account[BDAY_IND].split("/");
         Date birthday = new Date(Integer.parseInt(parsedBday[2]), Integer.parseInt(parsedBday[0]), Integer.parseInt(parsedBday[1]));
@@ -787,6 +936,11 @@ public class TransactionManagerController {
         } return null;
     }
 
+    /**
+     * Determine if campus chosen is valid.
+     * @param code Campus code.
+     * @return true if campus chosen is valid, false otherwise.
+     */
     private boolean checkCampus(int code){
         if (code != 0 && code != 1 && code != 2){
             //System.out.println("Invalid campus code.");
@@ -802,6 +956,11 @@ public class TransactionManagerController {
         return false;
     }
 
+    /**
+     * Determine which campus is chosen.
+     * @param campusCode Campus code.
+     * @return Campus Enum that is chosen.
+     */
     private Campus findCampus(int campusCode){
         Campus campus = Campus.NEWARK;
         for (Campus check: Campus.values()) {
