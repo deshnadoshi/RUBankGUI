@@ -481,7 +481,7 @@ public class TransactionManagerController {
             return false;
         }
         if (openDOB.getValue() == null){
-            openResult.appendText("Missing data for opening an account.\n");
+            openResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for opening an account.\n");
             resetAllOpen();
             return false;
         }
@@ -521,7 +521,7 @@ public class TransactionManagerController {
         }
 
         if (closeDOB.getValue() == null){
-            closeResult.appendText("Missing data for closing an account.\n");
+            closeResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for closing an account.\n");
             resetAllClose();
             return false;
         }
@@ -546,7 +546,7 @@ public class TransactionManagerController {
             return false;
         }
         if (depDOB.getValue() == null){
-            depositResult.appendText("Missing data for making deposit in account.\n");
+            depositResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for making deposit in account.\n");
             resetAllDep();
             return false;
         }
@@ -569,7 +569,7 @@ public class TransactionManagerController {
             return false;
         }
         if (withDOB.getValue() == null){
-            withResult.appendText("Missing data for withdrawing from account.\n");
+            withResult.appendText("Please use Date Picker to choose DOB from calendar. Missing data for withdrawing from account.\n");
             resetAllWith();
             return false;
         }
