@@ -141,185 +141,52 @@ public class TransactionManagerController {
 
     private static final int MIN_AGE = 16;
     private static final int MAX_AGE = 24;
+    private static final int ACC_IND = 0;
+    private static final int FNAME_IND = 1;
+    private static final int LNAME_IND = 2;
+    private static final int BDAY_IND = 3;
+    private static final int BALANCE_IND = 4;
+    private static final int MM_MIN = 2000;
+    private static final int STATUS_IND = 5;
 
 
     // Open Account Methods
     @FXML
     private void openingAccount(ActionEvent event){
-        boolean fnameValid = true;
-        boolean lnameValid = true;
-        boolean dobValid = true;
-        boolean amtValid = true;
-        boolean actValid = true;
-        boolean campusValid = true;
-
         boolean openActDOB = true; // Checking for input validity.
-        boolean openActAmt = true; // Checking for input validity.
-
-        if (openFname.getText().isBlank()){
-            fnameValid = false; // First name field is empty.
-            openResult.setText("Missing data for opening an account.");
-            resetAllOpen();
-        }
-        if (openLname.getText().isBlank()){
-            lnameValid = false; // Last name field is empty.
-            openResult.setText("Missing data for opening an account.");
-            resetAllOpen();
-        }
-
-        if (openDOB.getValue() == null){
-            dobValid = false;
-            openResult.setText("Missing data for opening an account.");
-            resetAllOpen();
-        }
-
-        if (openAmt.getText().isBlank()){
-            amtValid = false;
-            openResult.setText("Missing data for opening an account.");
-            resetAllOpen();
-        }
-
-        // If no account is selected, then you can't make an account.
-        if (Account.getSelectedToggle() == null){
-            actValid = false;
-            openResult.setText("Missing data for opening an account.");
-            resetAllOpen();
-        } else {
-            RadioButton actTypeButton = (RadioButton) Account.getSelectedToggle();
-            String actTypeFXID = actTypeButton.getId(); // FXID of the type of account selected
-
-            if (actTypeFXID.equals("openCC")){
-                if (CampusName.getSelectedToggle() == null){
-                    campusValid = false;
-                    openResult.setText("Invalid campus code.");
-                    resetAllOpen();
-                }
-            }
-        }
-
-        if (fnameValid && lnameValid && dobValid && amtValid && actValid && campusValid){
+        boolean valid = checkValidOpenAccount();
+        if (valid) {
             openResult.clear();
             LocalDate dob = openDOB.getValue();
             int day = dob.getDayOfMonth();
             int month = dob.getMonthValue();
             int year = dob.getYear();
-
             RadioButton actTypeButton = (RadioButton) Account.getSelectedToggle();
             String actTypeFXID = actTypeButton.getId();
-
             Date birthday = new Date(year, month, day);
             if (!checkDate(birthday, actNameOpen(actTypeFXID)).equals("T")){
-                // If the birthday is not valid
-                openActDOB = false;
-                openResult.setText(checkDate(birthday, actNameOpen(actTypeFXID)));
+                openActDOB = false; // If the birthday is not valid
+                openResult.appendText(checkDate(birthday, actNameOpen(actTypeFXID)));
             }
-
-            // Checking if the initial amount is valid
-            String initialDeposit = openAmt.getText();
-            if (initialDeposit.matches("-?\\d*")) {
-                // String contains only digits
-                int openAmount = Integer.parseInt(initialDeposit);
-                if (openAmount <= 0){
-                    openActAmt = false;
-                    openResult.setText("Initial deposit cannot be 0 or negative.");
-                }
-            } else {
-                openActAmt = false;
-                openResult.setText("Not a valid amount.");
-            }
-
-            if (!openActAmt || !openActDOB){
-                resetAllOpen(); // This needs to stay outside of the above if-statements, otherwise there's a NullPointExcep
-            }
-
-            if (openActDOB && openActAmt){
-                // Can open the account
+            boolean openActAmt = checkValidAmount(actNameOpen(actTypeFXID));
+            if (!openActAmt || !openActDOB) resetAllOpen(); // This needs to stay outside of the above if-statements, otherwise there's a NullPointExcep
+            if (openActDOB && openActAmt) { // Can open the account
                 openResult.clear();
                 String actName = actNameOpen(actTypeFXID); // Tells us the type of account to open
-                if (actName.equals("C")){
-                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                    Account add = new Checking(holder, Integer.parseInt(openAmt.getText()));
-                    if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
-                    } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is already in the database.");
-                    }
-
-                } else if (actName.equals("CC")){
-                    RadioButton campusTypeButton = (RadioButton) CampusName.getSelectedToggle();
-                    String campusTypeFXID = actTypeButton.getId();
-                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                    Account add = new CollegeChecking(holder, Integer.parseInt(openAmt.getText()), ccCampus(campusTypeFXID));
-                    if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
-                    } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is already in the database.");
-                    }
-                } else if (actName.equals("S")){
-                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                    Account add = new Savings(holder, Integer.parseInt(openAmt.getText()), openSLoyal.isSelected());
-                    if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
-                    } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is already in the database.");
-                    }
-                } else if (actName.equals("MM")){
-                    Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                    Account add = new MoneyMarket(holder, Integer.parseInt(openAmt.getText()), true, 0);
-                    if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
-                    } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is already in the database.");
-                    }
-                }
+                Account add = makeOpenAccount(actName, birthday);
+                if (actDb.open(add)) {
+                    printInfo("opened", openResult, add, actName);
+                } else printInfo("in_database", openResult, add, actName);
             }
         }
-
     }
 
     // Close Account Methods
     @FXML
     private void closingAccount(ActionEvent event){
-        boolean fnameValid = true;
-        boolean lnameValid = true;
-        boolean dobValid = true;
-        boolean actValid = true;
-
         boolean closeActDOB = true; // Checking for input validity.
-
-        if (closeFname.getText().isBlank()){
-            fnameValid = false; // First name field is empty.
-            openResult.setText("Missing data for closing an account.");
-            resetAllClose();
-        }
-        if (closeLname.getText().isBlank()){
-            lnameValid = false; // Last name field is empty.
-            closeResult.setText("Missing data for closing an account.");
-            resetAllClose();
-        }
-
-        if (closeDOB.getValue() == null){
-            dobValid = false;
-            closeResult.setText("Missing data for closing an account.");
-            resetAllClose();
-        }
-
-        // If no account type is selected, then you can't close an account.
-        if (CloseAccount.getSelectedToggle() == null){
-            actValid = false;
-            closeResult.setText("Missing data for closing an account.");
-            resetAllClose();
-        }
-
-        if (fnameValid && lnameValid && dobValid && actValid){
+        boolean valid = checkValidCloseAccount();
+        if (valid){
             LocalDate dob = closeDOB.getValue();
             int day = dob.getDayOfMonth();
             int month = dob.getMonthValue();
@@ -332,351 +199,384 @@ public class TransactionManagerController {
             if (!checkDate(birthday, actNameClose(actTypeFXID)).equals("T")){
                 // If the birthday is not valid
                 closeActDOB = false;
-                closeResult.setText(checkDate(birthday, actNameClose(actTypeFXID)));
+                closeResult.appendText(checkDate(birthday, actNameClose(actTypeFXID)));
             }
-
             if (!closeActDOB){
                 resetAllClose();
             }
-
             if (closeActDOB){
                 closeResult.clear();
-                String actName = actNameClose(actTypeFXID); // Tells us the type of account to open
-                if (actName.equals("C")){
-                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
-                    Account add = new Checking(holder, 0);
-                    if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
-                    } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-
-                } else if (actName.equals("CC")){
-                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
-                    Account add = new CollegeChecking(holder, 0, Campus.NEWARK);
-                    if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
-                    } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-                } else if (actName.equals("S")){
-                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
-                    Account add = new Savings(holder, 0, true);
-                    if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
-                    } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-                } else if (actName.equals("MM")){
-                    Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
-                    Account add = new MoneyMarket(holder, 0, true, 0);
-                    if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
-                                " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
-                    } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-                }
+                String actName = actNameClose(actTypeFXID); // Tells us the type of account to close
+                Account close = makeCloseAccount(actName, birthday);
+                if (actDb.close(close)) {
+                    printInfo("closed", closeResult, close, actName);
+                } else printInfo("not_in_database", closeResult, close, actName);
             }
-
         }
     }
 
     // Deposit Account Methods
     @FXML
     private void depositAccount(ActionEvent event){
-        boolean fnameValid = true;
-        boolean lnameValid = true;
-        boolean dobValid = true;
-        boolean actValid = true;
-
+        boolean valid = checkValidDepositAccount();
         boolean depActDOB = true; // Checking for input validity.
         boolean depActAmt = true; // Checking for input validity
-
-        if (depFname.getText().isBlank()){
-            fnameValid = false; // First name field is empty.
-            depositResult.setText("Missing data for making deposit in account.");
-            resetAllDep();
-        }
-        if (depLname.getText().isBlank()){
-            lnameValid = false; // Last name field is empty.
-            depositResult.setText("Missing data for making deposit in account.");
-            resetAllDep();
-        }
-        if (depDOB.getValue() == null){
-            dobValid = false;
-            depositResult.setText("Missing data for making deposit in account.");
-            resetAllDep();
-        }
-        if (DepositAccount.getSelectedToggle() == null){
-            actValid = false;
-            depositResult.setText("Missing data for making deposit in account.");
-            resetAllDep();
-        }
-
-        if (fnameValid && lnameValid && dobValid && actValid){
+        if (valid) {
             LocalDate dob = depDOB.getValue();
             int day = dob.getDayOfMonth();
             int month = dob.getMonthValue();
             int year = dob.getYear();
-
             RadioButton actTypeButton = (RadioButton) DepositAccount.getSelectedToggle();
             String actTypeFXID = actTypeButton.getId();
-
             Date birthday = new Date(year, month, day);
             if (!checkDate(birthday, actNameDep(actTypeFXID)).equals("T")){
-                // If the birthday is not valid
-                depActDOB = false;
-                depositResult.setText(checkDate(birthday, actNameDep(actTypeFXID)));
+                depActDOB = false; // If the birthday is not valid
+                depositResult.appendText(checkDate(birthday, actNameDep(actTypeFXID)));
             }
-
             String initialDeposit = depAmt.getText();
             if (initialDeposit.matches("-?\\d*")) {
                 int openAmount = Integer.parseInt(initialDeposit);
                 if (openAmount <= 0){
                     depActAmt = false;
-                    depositResult.setText("Deposit - amount cannot be 0 or negative.");
+                    depositResult.appendText("Deposit - amount cannot be 0 or negative.\n");
                 }
             } else {
                 depActAmt = false;
-                depositResult.setText("Not a valid amount.");
+                depositResult.appendText("Not a valid amount.\n");
             }
-
-            if (!depActDOB || !depActAmt){
-                resetAllDep();
-            }
-
+            if (!depActDOB || !depActAmt) resetAllDep();
             if (depActDOB && depActAmt){
                 depositResult.clear();
                 String actName = actNameDep(actTypeFXID); // Tells us the type of account to open
-
-                if (actName.equals("C")){
-                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                    Account dep = new Checking(holder, Integer.parseInt(initialDeposit));
-
-                    if (!actDb.depositNotFound(dep)){
-                        actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
-                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
-                    } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-
-                } else if (actName.equals("CC")){
-                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                    Account dep = new CollegeChecking(holder, Integer.parseInt(initialDeposit), Campus.NEWARK);
-
-                    if (!actDb.depositNotFound(dep)){
-                        actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
-                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
-                    } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-                } else if (actName.equals("S")){
-                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                    Account dep = new Savings(holder, Integer.parseInt(initialDeposit), true);
-
-                    if (!actDb.depositNotFound(dep)){
-                        actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
-                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
-                    } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-                } else if (actName.equals("MM")){
-                    Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                    Account dep = new MoneyMarket(holder, Integer.parseInt(initialDeposit), true, 0);
-
-                    if (!actDb.depositNotFound(dep)){
-                        actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
-                                " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
-                    } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
-                                "(" + actName + ") " + "is not in the database.");
-                    }
-                }
+                Account dep = makeDepositAccount(actName, birthday, initialDeposit);
+                if (!actDb.depositNotFound(dep)) {
+                    actDb.deposit(dep);
+                    printInfo("deposit", depositResult, dep, actName);
+                } else printInfo("not_in_database", depositResult, dep, actName);
             }
-
         }
     }
 
     // Withdraw Account Methods
     @FXML
     private void withdrawAccount(ActionEvent event){
-        boolean fnameValid = true;
-        boolean lnameValid = true;
-        boolean dobValid = true;
-        boolean actValid = true;
-
+        boolean valid = checkValidWithdrawAccount();
         boolean withActDOB = true; // Checking for input validity.
         boolean withActAmt = true; // Checking for input validity
-
-        if (withFname.getText().isBlank()){
-            fnameValid = false; // First name field is empty.
-            withResult.setText("Missing data for withdrawing from account.");
-            resetAllWith();
-        }
-        if (withLname.getText().isBlank()){
-            lnameValid = false; // Last name field is empty.
-            withResult.setText("Missing data for withdrawing from account.");
-            resetAllWith();
-        }
-        if (withDOB.getValue() == null){
-            dobValid = false;
-            withResult.setText("Missing data for withdrawing from account.");
-            resetAllWith();
-        }
-        if (WithdrawAccount.getSelectedToggle() == null){
-            actValid = false;
-            withResult.setText("Missing data for withdrawing from account.");
-            resetAllWith();
-        }
-
-        if (fnameValid && lnameValid && dobValid && actValid){
+        if (valid){
             LocalDate dob = withDOB.getValue();
             int day = dob.getDayOfMonth();
             int month = dob.getMonthValue();
             int year = dob.getYear();
-
             RadioButton actTypeButton = (RadioButton) WithdrawAccount.getSelectedToggle();
             String actTypeFXID = actTypeButton.getId();
-
             Date birthday = new Date(year, month, day);
             if (!checkDate(birthday, actNameWith(actTypeFXID)).equals("T")){
-                // If the birthday is not valid
-                withActDOB = false;
-                withResult.setText(checkDate(birthday, actNameWith(actTypeFXID)));
+                withActDOB = false; // If the birthday is not valid
+                withResult.appendText(checkDate(birthday, actNameWith(actTypeFXID)));
             }
-
             String initWith = withAmt.getText();
             if (initWith.matches("-?\\d*")) {
                 int wdrawAmount = Integer.parseInt(initWith);
                 if (wdrawAmount <= 0){
                     withActAmt = false;
-                    withResult.setText("Withdraw - amount cannot be 0 or negative.");
+                    withResult.appendText("Withdraw - amount cannot be 0 or negative.\n");
                 }
             } else {
                 withActAmt = false;
-                withResult.setText("Not a valid amount.");
+                withResult.appendText("Not a valid amount.\n");
             }
-
-            if (!withActDOB || !withActAmt){
-                resetAllWith();
-            }
-
+            if (!withActDOB || !withActAmt) resetAllWith();
             if (withActDOB && withActAmt){
                 withResult.clear();
                 String actName = actNameWith(actTypeFXID); // Tells us the type of account to open
-
-                if (actName.equals("C")){
-                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                    Account with = new Checking(holder, Integer.parseInt(initWith));
-
-                    if (actDb.contains(with)){
-                        if (actDb.withdraw(with)){
-                            // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
-                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
-                        } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
-                        }
-
-                    } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                "(" + actName + ") " + " is not in the database.");
-                    }
-
-                } else if (actName.equals("CC")){
-                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                    Account with = new CollegeChecking(holder, Integer.parseInt(initWith), Campus.NEWARK);
-
-                    if (actDb.contains(with)){
-                        if (actDb.withdraw(with)){
-                            // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
-                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
-                        } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
-                        }
-
-                    } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                "(" + actName + ") " + " is not in the database.");
-                    }
-                } else if (actName.equals("S")){
-                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                    Account with = new Savings(holder, Integer.parseInt(initWith), true);
-
-                    if (actDb.contains(with)){
-                        if (actDb.withdraw(with)){
-                            // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
-                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
-                        } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
-                        }
-
-                    } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                "(" + actName + ") " + " is not in the database.");
-                    }
-                } else if (actName.equals("MM")){
-                    Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                    Account with = new MoneyMarket(holder, Integer.parseInt(initWith), true, 0);
-
-                    if (actDb.contains(with)){
-                        if (actDb.withdraw(with)){
-                            // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
-                                    " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
-                        } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                    "(" + actName + ") " + " Withdraw - insufficient fund.");
-                        }
-
-                    } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
-                                "(" + actName + ") " + " is not in the database.");
-                    }
-                }
+                Account with = makeWithdrawAccount(actName, birthday, initWith);
+                if (actDb.contains(with)) {
+                    if (actDb.withdraw(with)) {
+                        printInfo("withdraw", withResult, with, actName);
+                    } else printInfo("insufficient", withResult, with, actName);
+                } else printInfo("not_in_database", withResult, with, actName);
             }
-
         }
     }
 
     // Account Database Methods
     @FXML
     private void printAll(ActionEvent event){
-        actDBShow.setText(actDb.printSorted());
+        actDBShow.appendText(actDb.printSorted());
     }
 
     @FXML
     private void printIF(ActionEvent event){
-        actDBShow.setText(actDb.printFeesAndInterests());
+        actDBShow.appendText(actDb.printFeesAndInterests());
     }
 
     @FXML
     private void printUB(ActionEvent event){
-        actDBShow.setText(actDb.printUpdatedBalances());
+        actDBShow.appendText(actDb.printUpdatedBalances());
     }
 
+    @FXML
+    private void loadActs(ActionEvent event) throws FileNotFoundException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File selectedFile = fileChooser.showOpenDialog(null);
+        boolean success = false;
+        try {
+            Scanner accountsList = new Scanner(selectedFile);
+            while (accountsList.hasNextLine()) {
+                String data = accountsList.nextLine();
+                if (data.isEmpty()) break;
+                String[] splitData = data.split(",");
+                Account newAccount = makeAccountFromArray(splitData);
+                success = true;
+                actDb.open(newAccount);
+            }
+        } catch (FileNotFoundException | NullPointerException e) {
+            actDBShow.appendText("File not found\n");
+        } finally {
+            if (success) actDBShow.appendText("Accounts loaded\n");
+        }
+    }
 
-    // General Methods
+    // Helper Methods
+    private Account makeOpenAccount(String actName, Date birthday) {
+        Account acc = null;
+        switch (actName) {
+            case "C" -> {
+                Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                acc = new Checking(holder, Integer.parseInt(openAmt.getText()));
+            } case "CC" -> {
+                RadioButton campusTypeButton = (RadioButton) CampusName.getSelectedToggle();
+                String campusTypeFXID = campusTypeButton.getId();
+                Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                acc = new CollegeChecking(holder, Integer.parseInt(openAmt.getText()), ccCampus(campusTypeFXID));
+            } case "S" -> {
+                Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                acc = new Savings(holder, Integer.parseInt(openAmt.getText()), openSLoyal.isSelected());
+            } case "MM" -> {
+                Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
+                acc = new MoneyMarket(holder, Integer.parseInt(openAmt.getText()), true, 0);
+            }
+        } return acc;
+    }
+
+    private Account makeCloseAccount(String actName, Date birthday) {
+        Account acc = null;
+        switch (actName) {
+            case "C" -> {
+                Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                acc = new Checking(holder, 0);
+            }
+            case "CC" -> {
+                Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                acc = new CollegeChecking(holder, 0, Campus.NEWARK);
+            }
+            case "S" -> {
+                Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                acc = new Savings(holder, 0, true);
+            }
+            case "MM" -> {
+                Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
+                acc = new MoneyMarket(holder, 0, true, 0);
+            }
+        } return acc;
+    }
+
+    private Account makeDepositAccount(String actName, Date birthday, String initialDeposit) {
+        Account dep = null;
+        switch (actName) {
+            case "C" -> {
+                Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                dep = new Checking(holder, Integer.parseInt(initialDeposit));
+            }
+            case "CC" -> {
+                Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                dep = new CollegeChecking(holder, Integer.parseInt(initialDeposit), Campus.NEWARK);
+            }
+            case "S" -> {
+                Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                dep = new Savings(holder, Integer.parseInt(initialDeposit), true);
+            }
+            case "MM" -> {
+                Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
+                dep = new MoneyMarket(holder, Integer.parseInt(initialDeposit), true, 0);
+            }
+        } return dep;
+    }
+
+    private Account makeWithdrawAccount(String actName, Date birthday, String initWith) {
+        Account with = null;
+        switch (actName) {
+            case "C" -> {
+                Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                with = new Checking(holder, Integer.parseInt(initWith));
+            }
+            case "CC" -> {
+                Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                with = new CollegeChecking(holder, Integer.parseInt(initWith), Campus.NEWARK);
+            }
+            case "S" -> {
+                Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                with = new Savings(holder, Integer.parseInt(initWith), true);
+            }
+            case "MM" -> {
+                Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
+                with = new MoneyMarket(holder, Integer.parseInt(initWith), true, 0);
+            }
+        } return with;
+    }
+
+    private void printInfo(String type, TextArea textarea, Account acc, String actName) {
+        switch (type) {
+            case "opened" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() +
+                    " " + acc.getHolder().getDOB() + "(" + actName + ")" + " opened.\n");
+            case "in_database" ->
+                    textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() + " " + acc.getHolder().getDOB() +
+                            "(" + actName + ") " + "is already in the database.\n");
+            case "closed" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() +
+                    " " + acc.getHolder().getDOB() + "(" + actName + ")" + " has been closed.\n");
+            case "not_in_database" ->
+                    textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() + " " + acc.getHolder().getDOB() +
+                            "(" + actName + ") " + "is not in the database.\n");
+            case "deposit" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() +
+                    " " + acc.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.\n");
+            case "insufficient" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() + " " + acc.getHolder().getDOB() +
+                    "(" + actName + ") " + " Withdraw - insufficient fund.\n");
+            case "withdraw" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() +
+                    " " + acc.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
+        }
+    }
+    private boolean checkValidAmount(String actType) {
+        // Checking if the initial amount is valid
+        String initialDeposit = openAmt.getText();
+        if (initialDeposit.matches("-?\\d*")) {
+            // String contains only digits
+            int openAmount = Integer.parseInt(initialDeposit);
+            if (openAmount <= 0){
+                openResult.appendText("Initial deposit cannot be 0 or negative.\n");
+                return false;
+            } else if (actType.equals("MM") && openAmount < 2000) {
+                openResult.appendText("Minimum of $2000 to open a Money Market account.\n");
+                return false;
+            }
+        } else {
+            openResult.appendText("Not a valid amount.\n");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkValidOpenAccount() {
+        if (openFname.getText().isBlank()){
+            openResult.appendText("Missing data for opening an account.\n");
+            resetAllOpen();
+            return false;
+        }
+        if (openLname.getText().isBlank()){
+            openResult.appendText("Missing data for opening an account.\n");
+            resetAllOpen();
+            return false;
+        }
+        if (openDOB.getValue() == null){
+            openResult.appendText("Missing data for opening an account.\n");
+            resetAllOpen();
+            return false;
+        }
+        if (openAmt.getText().isBlank()){
+            openResult.appendText("Missing data for opening an account.\n");
+            resetAllOpen();
+            return false;
+        }
+        // If no account is selected, then you can't make an account.
+        if (Account.getSelectedToggle() == null){
+            openResult.appendText("Missing data for opening an account.\n");
+            resetAllOpen();
+            return false;
+        } else {
+            RadioButton actTypeButton = (RadioButton) Account.getSelectedToggle();
+            String actTypeFXID = actTypeButton.getId(); // FXID of the type of account selected
+            if (actTypeFXID.equals("openCC")){
+                if (CampusName.getSelectedToggle() == null){
+                    openResult.appendText("Invalid campus code.\n");
+                    resetAllOpen();
+                    return false;
+                }
+            }
+        } return true;
+    }
+
+    private boolean checkValidCloseAccount() {
+        if (closeFname.getText().isBlank()){
+            openResult.appendText("Missing data for closing an account.\n");
+            resetAllClose();
+            return false;
+        }
+        if (closeLname.getText().isBlank()){
+            closeResult.appendText("Missing data for closing an account.\n");
+            resetAllClose();
+            return false;
+        }
+
+        if (closeDOB.getValue() == null){
+            closeResult.appendText("Missing data for closing an account.\n");
+            resetAllClose();
+            return false;
+        }
+
+        // If no account type is selected, then you can't close an account.
+        if (CloseAccount.getSelectedToggle() == null){
+            closeResult.appendText("Missing data for closing an account.\n");
+            resetAllClose();
+            return false;
+        } return true;
+    }
+
+    private boolean checkValidDepositAccount() {
+        if (depFname.getText().isBlank()){
+            depositResult.appendText("Missing data for making deposit in account.\n");
+            resetAllDep();
+            return false;
+        }
+        if (depLname.getText().isBlank()){
+            depositResult.appendText("Missing data for making deposit in account.\n");
+            resetAllDep();
+            return false;
+        }
+        if (depDOB.getValue() == null){
+            depositResult.appendText("Missing data for making deposit in account.\n");
+            resetAllDep();
+            return false;
+        }
+        if (DepositAccount.getSelectedToggle() == null){
+            depositResult.appendText("Missing data for making deposit in account.\n");
+            resetAllDep();
+            return false;
+        } return true;
+    }
+
+    private boolean checkValidWithdrawAccount() {
+        if (withFname.getText().isBlank()){
+            withResult.appendText("Missing data for withdrawing from account.\n");
+            resetAllWith();
+            return false;
+        }
+        if (withLname.getText().isBlank()){
+            withResult.appendText("Missing data for withdrawing from account.\n");
+            resetAllWith();
+            return false;
+        }
+        if (withDOB.getValue() == null){
+            withResult.appendText("Missing data for withdrawing from account.\n");
+            resetAllWith();
+            return false;
+        }
+        if (WithdrawAccount.getSelectedToggle() == null){
+            withResult.appendText("Missing data for withdrawing from account.\n");
+            resetAllWith();
+            return false;
+        } return true;
+    }
 
     /**
      * Determine the type of campus based on the fxid of the selected button.
@@ -700,9 +600,7 @@ public class TransactionManagerController {
                 campus = check;
             }
         }
-
         return campus;
-
     }
 
     /**
@@ -859,24 +757,59 @@ public class TransactionManagerController {
         });
     }
 
-    @FXML
-    private void loadActs(ActionEvent event) throws FileNotFoundException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        File selectedFile = fileChooser.showOpenDialog(null);
-        try {
-            Scanner accountsList = new Scanner(selectedFile);
-            while (accountsList.hasNextLine()) {
-                String newAccount = accountsList.nextLine();
-                actDBShow.appendText(newAccount); // testing
+    private Account makeAccountFromArray(String[] account) {
+        String[] parsedBday = account[BDAY_IND].split("/");
+        Date birthday = new Date(Integer.parseInt(parsedBday[2]), Integer.parseInt(parsedBday[0]), Integer.parseInt(parsedBday[1]));
+        switch (account[ACC_IND]) {
+            case "C" -> {
+                if (checkDate(birthday, "C").equals("T")) {
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    return new Checking(newProfile, Double.parseDouble(account[BALANCE_IND]));
+                }
+            } case "CC" -> {
+                if (checkDate(birthday, "CC").equals("T")) {
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    if (checkCampus(Integer.parseInt(account[5]))) { // if it's a valid campus
+                        return new CollegeChecking(newProfile, Double.parseDouble(account[BALANCE_IND]), findCampus(Integer.parseInt(account[STATUS_IND])));
+                    }
+                }
+            } case "S" -> {
+                if (checkDate(birthday, "S").equals("T")) {
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    return new Savings(newProfile, Double.parseDouble(account[BALANCE_IND]), !account[STATUS_IND].equals("0"));
+                }
+            } case "MM" -> {
+                if (checkDate(birthday, "MM").equals("T")){
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    return new MoneyMarket(newProfile, Double.parseDouble(account[BALANCE_IND]), true, 0);
+                }
             }
-        } catch (FileNotFoundException e) {
-            actDBShow.appendText("File not found");
-            //throw new RuntimeException(e);
-        }
+        } return null;
+    }
 
-        actDBShow.appendText(selectedFile.getName()); // testing if file is successfully opened
-        //if (selectedFile.) // check the file type
+    private boolean checkCampus(int code){
+        if (code != 0 && code != 1 && code != 2){
+            //System.out.println("Invalid campus code.");
+            return false;
+        }
+        Campus campus = Campus.NEWARK;
+        for (Campus check: Campus.values()) {
+            if (check.getCode() == code) {
+                campus = check;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Campus findCampus(int campusCode){
+        Campus campus = Campus.NEWARK;
+        for (Campus check: Campus.values()) {
+            if (check.getCode() == campusCode) {
+                campus = check;
+            }
+        }
+        return campus;
     }
 
     /**
@@ -892,35 +825,24 @@ public class TransactionManagerController {
         Profile temp = new Profile("Temp", "Temp", bday);
 
         if (bday.getYear() == currentYear){
-            return ("DOB invalid: " + bday + " cannot be today or a future day.");
+            return ("DOB invalid: " + bday + " cannot be today or a future day.\n");
         } else if (!bday.isValid()){
-            return ("DOB invalid: " + bday + " not a valid calendar date!");
+            return ("DOB invalid: " + bday + " not a valid calendar date!\n");
         } else if (accountType.equals("CC")){
             if (temp.age() < MIN_AGE ){
-                return ("DOB invalid: " + bday + " under 16.");
+                return ("DOB invalid: " + bday + " under 16.\n");
             } else if (temp.age() > MAX_AGE){
-                return ("DOB invalid: " + bday + " over 24.");
+                return ("DOB invalid: " + bday + " over 24.\n");
             } else if (temp.age() == MAX_AGE){
                 if(bday.getDay() < todaysDay){
-                    return ("DOB invalid: " + bday + " over 24.");
+                    return ("DOB invalid: " + bday + " over 24.\n");
                 }
             }
         } else if (!accountType.equals("CC")){
             if (temp.age() < MIN_AGE ){
-                return ("DOB invalid: " + bday + " under 16.");
+                return ("DOB invalid: " + bday + " under 16.\n");
             }
         }
         return "T"; // Return statement when all the input is correct
     }
-
-
-
-
-
-
-
-
-
-
-
 }

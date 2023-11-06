@@ -149,11 +149,11 @@ public class AccountDatabase {
         else {
             Account[] sortedArray = arrayForSorting(accounts);
             quickSort(sortedArray, 0, sortedArray.length - 1);
-            retString += ("\n*Accounts sorted by account type and profile.");
+            retString += ("\n*Accounts sorted by account type and profile.\n");
             for (int i = 0; i < numAcct; i++) {
-                retString += ("\n" + sortedArray[i]);
+                retString += ("\n" + sortedArray[i] + "\n");
             }
-            retString += ("*end of list.\n");
+            retString += ("\n*end of list.\n");
         }
         return retString;
     }
@@ -170,7 +170,7 @@ public class AccountDatabase {
             quickSort(sortedArray, 0, sortedArray.length - 1);
             retString += ("\n*list of accounts with fee and monthly interest\n");
             for (int i = 0; i < numAcct; i++) {
-                retString += ("\n" + sortedArray[i].netBalanceToString());
+                retString += ("\n" + sortedArray[i].netBalanceToString() + "\n");
             }
             retString += ("\n*end of list.\n");
         }
@@ -185,7 +185,7 @@ public class AccountDatabase {
     public String printUpdatedBalances() {
         String retString = "";
 
-        if (numAcct == 0) return("Account Database is empty!");
+        if (numAcct == 0) return("\nAccount Database is empty!\n");
         else {
             Account[] sortedArray = arrayForSorting(accounts);
             quickSort(sortedArray, 0, sortedArray.length - 1);
@@ -196,7 +196,7 @@ public class AccountDatabase {
                 if (sortedArray[i].getClass().equals(MoneyMarket.class)) {
                     ((MoneyMarket) sortedArray[i]).resetWithdrawal();
                 }
-                retString += ("\n" + sortedArray[i]);
+                retString += ("\n" + sortedArray[i] + "\n");
             }
             retString += ("\n*end of list.\n");
         }
