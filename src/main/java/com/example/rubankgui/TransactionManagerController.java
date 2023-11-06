@@ -234,8 +234,8 @@ public class TransactionManagerController {
                 depositResult.appendText(checkDate(birthday, actNameDep(actTypeFXID)));
             }
             String initialDeposit = depAmt.getText();
-            if (initialDeposit.matches("-?\\d*")) {
-                int openAmount = Integer.parseInt(initialDeposit);
+            if (initialDeposit.matches("-?\\d+(\\.\\d{1,2})?")) {
+                double openAmount = Double.parseDouble(initialDeposit);
                 if (openAmount <= 0){
                     depActAmt = false;
                     depositResult.appendText("Deposit - amount cannot be 0 or negative.\n");
@@ -276,8 +276,8 @@ public class TransactionManagerController {
                 withResult.appendText(checkDate(birthday, actNameWith(actTypeFXID)));
             }
             String initWith = withAmt.getText();
-            if (initWith.matches("-?\\d*")) {
-                int wdrawAmount = Integer.parseInt(initWith);
+            if (initWith.matches("-?\\d+(\\.\\d{1,2})?")) {
+                double wdrawAmount = Double.parseDouble(initWith);
                 if (wdrawAmount <= 0){
                     withActAmt = false;
                     withResult.appendText("Withdraw - amount cannot be 0 or negative.\n");
@@ -293,8 +293,10 @@ public class TransactionManagerController {
                 Account with = makeWithdrawAccount(actName, birthday, initWith);
                 if (actDb.contains(with)) {
                     if (actDb.withdraw(with)) {
-                        actDb.updateWithdraws(with);
-                        actDb.updateLoyalty(with);
+                        if(actNameWith(actTypeFXID).equals("MM")){
+                            actDb.updateWithdraws(with);
+                            actDb.updateLoyalty(with);
+                        }
                         printInfo("withdraw", withResult, with, actName);
                     } else printInfo("insufficient", withResult, with, actName);
                 } else printInfo("not_in_database", withResult, with, actName);
@@ -347,18 +349,18 @@ public class TransactionManagerController {
         switch (actName) {
             case "C" -> {
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new Checking(holder, Integer.parseInt(openAmt.getText()));
+                acc = new Checking(holder, Double.parseDouble(openAmt.getText()));
             } case "CC" -> {
                 RadioButton campusTypeButton = (RadioButton) CampusName.getSelectedToggle();
                 String campusTypeFXID = campusTypeButton.getId();
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new CollegeChecking(holder, Integer.parseInt(openAmt.getText()), ccCampus(campusTypeFXID));
+                acc = new CollegeChecking(holder, Double.parseDouble(openAmt.getText()), ccCampus(campusTypeFXID));
             } case "S" -> {
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new Savings(holder, Integer.parseInt(openAmt.getText()), openSLoyal.isSelected());
+                acc = new Savings(holder, Double.parseDouble(openAmt.getText()), openSLoyal.isSelected());
             } case "MM" -> {
                 Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
-                acc = new MoneyMarket(holder, Integer.parseInt(openAmt.getText()), true, 0);
+                acc = new MoneyMarket(holder, Double.parseDouble(openAmt.getText()), true, 0);
             }
         } return acc;
     }
@@ -390,19 +392,19 @@ public class TransactionManagerController {
         switch (actName) {
             case "C" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new Checking(holder, Integer.parseInt(initialDeposit));
+                dep = new Checking(holder, Double.parseDouble(initialDeposit));
             }
             case "CC" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new CollegeChecking(holder, Integer.parseInt(initialDeposit), Campus.NEWARK);
+                dep = new CollegeChecking(holder, Double.parseDouble(initialDeposit), Campus.NEWARK);
             }
             case "S" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new Savings(holder, Integer.parseInt(initialDeposit), true);
+                dep = new Savings(holder, Double.parseDouble(initialDeposit), true);
             }
             case "MM" -> {
                 Profile holder = new Profile(depFname.getText(), depLname.getText(), birthday);
-                dep = new MoneyMarket(holder, Integer.parseInt(initialDeposit), true, 0);
+                dep = new MoneyMarket(holder, Double.parseDouble(initialDeposit), true, 0);
             }
         } return dep;
     }
@@ -412,19 +414,19 @@ public class TransactionManagerController {
         switch (actName) {
             case "C" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new Checking(holder, Integer.parseInt(initWith));
+                with = new Checking(holder, Double.parseDouble(initWith));
             }
             case "CC" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new CollegeChecking(holder, Integer.parseInt(initWith), Campus.NEWARK);
+                with = new CollegeChecking(holder, Double.parseDouble(initWith), Campus.NEWARK);
             }
             case "S" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new Savings(holder, Integer.parseInt(initWith), true);
+                with = new Savings(holder, Double.parseDouble(initWith), true);
             }
             case "MM" -> {
                 Profile holder = new Profile(withFname.getText(), withLname.getText(), birthday);
-                with = new MoneyMarket(holder, Integer.parseInt(initWith), true, 0);
+                with = new MoneyMarket(holder, Double.parseDouble(initWith), true, 0);
             }
         } return with;
     }
@@ -449,12 +451,13 @@ public class TransactionManagerController {
                     " " + acc.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
         }
     }
+
     private boolean checkValidAmount(String actType) {
         // Checking if the initial amount is valid
         String initialDeposit = openAmt.getText();
-        if (initialDeposit.matches("-?\\d*")) {
+        if (initialDeposit.matches("-?\\d+(\\.\\d{1,2})?")) {
             // String contains only digits
-            int openAmount = Integer.parseInt(initialDeposit);
+            double openAmount = Double.parseDouble(initialDeposit);
             if (openAmount <= 0){
                 openResult.appendText("Initial deposit cannot be 0 or negative.\n");
                 return false;
