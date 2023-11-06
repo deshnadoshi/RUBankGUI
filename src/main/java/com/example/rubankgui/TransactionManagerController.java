@@ -981,9 +981,9 @@ public class TransactionManagerController {
         Calendar currentDate = Calendar.getInstance();
         int currentYear = currentDate.get(Calendar.YEAR);
         int todaysDay = currentDate.get(Calendar.DAY_OF_MONTH);
+        Date today = new Date(currentYear, currentDate.get(Calendar.MONTH) + 1, todaysDay);
         Profile temp = new Profile("Temp", "Temp", bday);
-
-        if (bday.getYear() == currentYear){
+        if (bday.compareTo(today) >= 0){
             return ("DOB invalid: " + bday + " cannot be today or a future day.\n");
         } else if (!bday.isValid()){
             return ("DOB invalid: " + bday + " not a valid calendar date!\n");
