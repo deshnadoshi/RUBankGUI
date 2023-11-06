@@ -11,6 +11,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.*;
 
+/**
+ * Controls the GUI components.
+ * @author Deshna Doshi, Haejin Song
+ */
 public class TransactionManagerController {
 
     Account[] allAccounts = new Account[4];
@@ -150,7 +154,10 @@ public class TransactionManagerController {
     private static final int STATUS_IND = 5;
 
 
-    // Open Account Methods
+    /**
+     * Opens an account.
+     * @param event The action of clicking the Open button.
+     */
     @FXML
     private void openingAccount(ActionEvent event){
         boolean openActDOB = true; // Checking for input validity.
@@ -181,7 +188,10 @@ public class TransactionManagerController {
         }
     }
 
-    // Close Account Methods
+    /**
+     * Closes an account.
+     * @param event The action of clicking the Close button.
+     */
     @FXML
     private void closingAccount(ActionEvent event){
         boolean closeActDOB = true; // Checking for input validity.
@@ -215,7 +225,10 @@ public class TransactionManagerController {
         }
     }
 
-    // Deposit Account Methods
+    /**
+     * Deposits to an account.
+     * @param event The action of clicking the Deposit button.
+     */
     @FXML
     private void depositAccount(ActionEvent event){
         boolean valid = checkValidDepositAccount();
@@ -257,7 +270,10 @@ public class TransactionManagerController {
         }
     }
 
-    // Withdraw Account Methods
+    /**
+     * Withdraws from an account.
+     * @param event The action of clicking the Withdraw button.
+     */
     @FXML
     private void withdrawAccount(ActionEvent event){
         boolean valid = checkValidWithdrawAccount();
@@ -304,22 +320,37 @@ public class TransactionManagerController {
         }
     }
 
-    // Account Database Methods
+    /**
+     * Prints a sorted list of the account database.
+     * @param event The action of clicking the respective print button.
+     */
     @FXML
     private void printAll(ActionEvent event){
         actDBShow.appendText(actDb.printSorted());
     }
 
+    /**
+     * Prints a sorted list of the interests and feeds.
+     * @param event The action of clicking the respective print button.
+     */
     @FXML
     private void printIF(ActionEvent event){
         actDBShow.appendText(actDb.printFeesAndInterests());
     }
 
+    /**
+     * Prints a sorted list of the updated balances.
+     * @param event The action of clicking the respective print button.
+     */
     @FXML
     private void printUB(ActionEvent event){
         actDBShow.appendText(actDb.printUpdatedBalances());
     }
 
+    /**
+     * Reads data from a file and opens accounts.
+     * @param event The action of clicking the upload button.
+     */
     @FXML
     private void loadActs(ActionEvent event) throws FileNotFoundException {
         FileChooser fileChooser = new FileChooser();
@@ -344,6 +375,13 @@ public class TransactionManagerController {
     }
 
     // Helper Methods
+
+    /**
+     * Opens an account based on the account name and birthday.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @return new Account object.
+     */
     private Account makeOpenAccount(String actName, Date birthday) {
         Account acc = null;
         switch (actName) {
@@ -365,6 +403,12 @@ public class TransactionManagerController {
         } return acc;
     }
 
+    /**
+     * Makes a shell account to close.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @return new shell Account object.
+     */
     private Account makeCloseAccount(String actName, Date birthday) {
         Account acc = null;
         switch (actName) {
@@ -387,6 +431,13 @@ public class TransactionManagerController {
         } return acc;
     }
 
+    /**
+     * Makes a shell account to deposit.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @param initialDeposit Amount to deposit.
+     * @return new shell Account object.
+     */
     private Account makeDepositAccount(String actName, Date birthday, String initialDeposit) {
         Account dep = null;
         switch (actName) {
@@ -409,6 +460,13 @@ public class TransactionManagerController {
         } return dep;
     }
 
+    /**
+     * Makes a shell account to withdraw.
+     * @param actName Type of account.
+     * @param birthday DOB of holder.
+     * @param initWith Amount to withdraw.
+     * @return new shell Account object.
+     */
     private Account makeWithdrawAccount(String actName, Date birthday, String initWith) {
         Account with = null;
         switch (actName) {
@@ -431,6 +489,13 @@ public class TransactionManagerController {
         } return with;
     }
 
+    /**
+     * Print most recent action to the TextArea.
+     * @param type Action that occured.
+     * @param textarea GUI component to print to.
+     * @param acc Account affected.
+     * @param actName Type of account.
+     */
     private void printInfo(String type, TextArea textarea, Account acc, String actName) {
         switch (type) {
             case "opened" -> textarea.appendText(acc.getHolder().getFname() + " " + acc.getHolder().getLname() +
@@ -452,6 +517,11 @@ public class TransactionManagerController {
         }
     }
 
+    /**
+     * Determine if entered amount is valid.
+     * @param actType Type of account.
+     * @return true if the amount is valid, false otherwise.
+     */
     private boolean checkValidAmount(String actType) {
         // Checking if the initial amount is valid
         String initialDeposit = openAmt.getText();
@@ -472,6 +542,10 @@ public class TransactionManagerController {
         return true;
     }
 
+    /**
+     * Check if any fields are empty in Open tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidOpenAccount() {
         if (openFname.getText().isBlank()){
             openResult.appendText("Missing data for opening an account.\n");
@@ -511,6 +585,10 @@ public class TransactionManagerController {
         } return true;
     }
 
+    /**
+     * Check if any fields are empty in Close tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidCloseAccount() {
         if (closeFname.getText().isBlank()){
             openResult.appendText("Missing data for closing an account.\n");
@@ -537,6 +615,10 @@ public class TransactionManagerController {
         } return true;
     }
 
+    /**
+     * Check if any fields are empty in Deposit tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidDepositAccount() {
         if (depFname.getText().isBlank()){
             depositResult.appendText("Missing data for making deposit in account.\n");
@@ -560,6 +642,10 @@ public class TransactionManagerController {
         } return true;
     }
 
+    /**
+     * Check if any fields are empty in Withdraw tab.
+     * @return true if all data has been filled out, false otherwise.
+     */
     private boolean checkValidWithdrawAccount() {
         if (withFname.getText().isBlank()){
             withResult.appendText("Missing data for withdrawing from account.\n");
@@ -654,6 +740,11 @@ public class TransactionManagerController {
         return "NA";
     }
 
+    /**
+     * Determine the type of account based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return String of the type of account.
+     */
     private String actNameDep(String fxidVal){
         switch (fxidVal) {
             case "depC" -> {
@@ -672,6 +763,11 @@ public class TransactionManagerController {
         return "NA";
     }
 
+    /**
+     * Determine the type of account based on the fxid of the selected button.
+     * @param fxidVal String of the fxid of the selected button.
+     * @return String of the type of account.
+     */
     private String actNameWith(String fxidVal){
         switch (fxidVal) {
             case "withC" -> {
@@ -805,6 +901,11 @@ public class TransactionManagerController {
 
     }
 
+    /**
+     * Helper method to open accounts from file.
+     * @param account Array to hold all the accounts.
+     * @return new Account object that was created.
+     */
     private Account makeAccountFromArray(String[] account) {
         String[] parsedBday = account[BDAY_IND].split("/");
         Date birthday = new Date(Integer.parseInt(parsedBday[2]), Integer.parseInt(parsedBday[0]), Integer.parseInt(parsedBday[1]));
@@ -835,6 +936,11 @@ public class TransactionManagerController {
         } return null;
     }
 
+    /**
+     * Determine if campus chosen is valid.
+     * @param code Campus code.
+     * @return true if campus chosen is valid, false otherwise.
+     */
     private boolean checkCampus(int code){
         if (code != 0 && code != 1 && code != 2){
             //System.out.println("Invalid campus code.");
@@ -850,6 +956,11 @@ public class TransactionManagerController {
         return false;
     }
 
+    /**
+     * Determine which campus is chosen.
+     * @param campusCode Campus code.
+     * @return Campus Enum that is chosen.
+     */
     private Campus findCampus(int campusCode){
         Campus campus = Campus.NEWARK;
         for (Campus check: Campus.values()) {
