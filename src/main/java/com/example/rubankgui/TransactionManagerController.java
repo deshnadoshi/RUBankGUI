@@ -293,6 +293,8 @@ public class TransactionManagerController {
                 Account with = makeWithdrawAccount(actName, birthday, initWith);
                 if (actDb.contains(with)) {
                     if (actDb.withdraw(with)) {
+                        actDb.updateWithdraws(with);
+                        actDb.updateLoyalty(with);
                         printInfo("withdraw", withResult, with, actName);
                     } else printInfo("insufficient", withResult, with, actName);
                 } else printInfo("not_in_database", withResult, with, actName);
@@ -735,7 +737,12 @@ public class TransactionManagerController {
      * @param event The action of choosing a College Checking account.
      */
     @FXML
-    private void initializeOpenCC(ActionEvent event){
+    private void initializeOpenCC(ActionEvent event) {
+        openCCNewark.setDisable(true);
+        openCCNB.setDisable(true);
+        openCCCamden.setDisable(true);
+        openSLoyal.setDisable(true);
+
         openCC.selectedProperty().addListener((observable, oldValue, newValue) -> {
             boolean disable = !newValue;
             openCCNewark.setDisable(disable);
@@ -743,7 +750,29 @@ public class TransactionManagerController {
             openCCCamden.setDisable(disable);
         });
 
+        Account.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                openCCNB.setDisable(true);
+                openCCCamden.setDisable(true);
+                openCCNewark.setDisable(true);
+                openSLoyal.setDisable(true);
+            }
+        });
+
+        boolean disable = !openCC.isSelected();
+        openCCNewark.setDisable(disable);
+        openCCNB.setDisable(disable);
+        openCCCamden.setDisable(disable);
+
+        openS.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            boolean disables = !newValue;
+            openSLoyal.setDisable(disables);
+        });
+
+        boolean disables = !openS.isSelected();
+        openSLoyal.setDisable(disables);
     }
+
 
     /**
      * Checks if Savings account is selected and allows Loyal selection.
@@ -751,10 +780,26 @@ public class TransactionManagerController {
      */
     @FXML
     private void initializeOpenS(ActionEvent event){
+        openSLoyal.setDisable(true);
+        if (openS.isSelected()){
+            openSLoyal.setDisable(false);
+        } else {
+            openS.setDisable(true);
+        }
         openS.selectedProperty().addListener((observable, oldValue, newValue) -> {
             boolean disable = !newValue;
             openSLoyal.setDisable(disable);
         });
+
+        Account.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                openSLoyal.setDisable(true);
+            }
+        });
+
+        boolean disable = !openS.isSelected();
+        openSLoyal.setDisable(disable);
+
     }
 
     private Account makeAccountFromArray(String[] account) {

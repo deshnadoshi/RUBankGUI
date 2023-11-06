@@ -317,6 +317,16 @@ public class AccountDatabase {
         }
     }
 
+    public void updateLoyalty(Account mm){
+        int mmInd = find(mm); // found index of mm in db
+
+        if (mmInd != -1){ // if it is found
+            Account updateAcc = accounts[mmInd]; // get the account object
+            MoneyMarket updateMM = (MoneyMarket) updateAcc; // turn into mm object so u can add withdrawal amt
+            updateMM.checkLoyalty();
+        }
+    }
+
     /**
      * Getter for the number of accounts in the database.
      * @return the number of accounts in the database.

@@ -17,7 +17,7 @@
                               <TextField fx:id="openLname" layoutX="14.0" layoutY="50.0" promptText="Last Name" />
                               <DatePicker fx:id="openDOB" layoutX="14.0" layoutY="84.0" promptText="Date of Birth" />
                               <TextField fx:id="openAmt" layoutX="227.0" layoutY="14.0" promptText="Initial Deposit" />
-                              <RadioButton fx:id="openC" layoutX="418.0" layoutY="18.0" mnemonicParsing="false" text="Checking">
+                              <RadioButton fx:id="openC" layoutX="418.0" layoutY="18.0" mnemonicParsing="false" onAction="#initializeOpenCC" text="Checking">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="Account" />
                                  </toggleGroup>
@@ -32,7 +32,7 @@
                               <RadioButton fx:id="openCCCamden" layoutX="453.0" layoutY="109.0" mnemonicParsing="false" text="Camden" toggleGroup="$CampusName" />
                               <RadioButton fx:id="openS" layoutX="418.0" layoutY="138.0" mnemonicParsing="false" onAction="#initializeOpenS" text="Savings" toggleGroup="$Account" />
                               <CheckBox fx:id="openSLoyal" layoutX="443.0" layoutY="162.0" mnemonicParsing="false" text="Loyal" />
-                              <RadioButton fx:id="openMM" layoutX="418.0" layoutY="198.0" mnemonicParsing="false" text="Money Market" toggleGroup="$Account" />
+                              <RadioButton fx:id="openMM" layoutX="418.0" layoutY="198.0" mnemonicParsing="false" onAction="#initializeOpenCC" text="Money Market" toggleGroup="$Account" />
                               <Button fx:id="openSubmit" layoutX="265.0" layoutY="257.0" mnemonicParsing="false" onAction="#openingAccount" text="OPEN" textAlignment="CENTER" />
                               <TextArea fx:id="openResult" editable="false" layoutX="14.0" layoutY="304.0" prefHeight="67.0" prefWidth="418.0" />
                            </children>
