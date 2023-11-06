@@ -158,31 +158,31 @@ public class TransactionManagerController {
 
         if (openFname.getText().isBlank()){
             fnameValid = false; // First name field is empty.
-            openResult.setText("Missing data for opening an account.");
+            openResult.appendText("Missing data for opening an account.");
             resetAllOpen();
         }
         if (openLname.getText().isBlank()){
             lnameValid = false; // Last name field is empty.
-            openResult.setText("Missing data for opening an account.");
+            openResult.appendText("Missing data for opening an account.");
             resetAllOpen();
         }
 
         if (openDOB.getValue() == null){
             dobValid = false;
-            openResult.setText("Missing data for opening an account.");
+            openResult.appendText("Missing data for opening an account.");
             resetAllOpen();
         }
 
         if (openAmt.getText().isBlank()){
             amtValid = false;
-            openResult.setText("Missing data for opening an account.");
+            openResult.appendText("Missing data for opening an account.");
             resetAllOpen();
         }
 
         // If no account is selected, then you can't make an account.
         if (Account.getSelectedToggle() == null){
             actValid = false;
-            openResult.setText("Missing data for opening an account.");
+            openResult.appendText("Missing data for opening an account.");
             resetAllOpen();
         } else {
             RadioButton actTypeButton = (RadioButton) Account.getSelectedToggle();
@@ -191,7 +191,7 @@ public class TransactionManagerController {
             if (actTypeFXID.equals("openCC")){
                 if (CampusName.getSelectedToggle() == null){
                     campusValid = false;
-                    openResult.setText("Invalid campus code.");
+                    openResult.appendText("Invalid campus code.");
                     resetAllOpen();
                 }
             }
@@ -211,7 +211,7 @@ public class TransactionManagerController {
             if (!checkDate(birthday, actNameOpen(actTypeFXID)).equals("T")){
                 // If the birthday is not valid
                 openActDOB = false;
-                openResult.setText(checkDate(birthday, actNameOpen(actTypeFXID)));
+                openResult.appendText(checkDate(birthday, actNameOpen(actTypeFXID)));
             }
 
             // Checking if the initial amount is valid
@@ -221,11 +221,11 @@ public class TransactionManagerController {
                 int openAmount = Integer.parseInt(initialDeposit);
                 if (openAmount <= 0){
                     openActAmt = false;
-                    openResult.setText("Initial deposit cannot be 0 or negative.");
+                    openResult.appendText("Initial deposit cannot be 0 or negative.");
                 }
             } else {
                 openActAmt = false;
-                openResult.setText("Not a valid amount.");
+                openResult.appendText("Not a valid amount.");
             }
 
             if (!openActAmt || !openActDOB){
@@ -240,10 +240,10 @@ public class TransactionManagerController {
                     Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
                     Account add = new Checking(holder, Integer.parseInt(openAmt.getText()));
                     if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
                     } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is already in the database.");
                     }
 
@@ -253,30 +253,30 @@ public class TransactionManagerController {
                     Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
                     Account add = new CollegeChecking(holder, Integer.parseInt(openAmt.getText()), ccCampus(campusTypeFXID));
                     if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
                     } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is already in the database.");
                     }
                 } else if (actName.equals("S")){
                     Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
                     Account add = new Savings(holder, Integer.parseInt(openAmt.getText()), openSLoyal.isSelected());
                     if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
                     } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is already in the database.");
                     }
                 } else if (actName.equals("MM")){
                     Profile holder = new Profile(openFname.getText(), openLname.getText(), birthday);
                     Account add = new MoneyMarket(holder, Integer.parseInt(openAmt.getText()), true, 0);
                     if (actDb.open(add)){
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " opened.");
                     } else {
-                        openResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        openResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is already in the database.");
                     }
                 }
@@ -297,25 +297,25 @@ public class TransactionManagerController {
 
         if (closeFname.getText().isBlank()){
             fnameValid = false; // First name field is empty.
-            openResult.setText("Missing data for closing an account.");
+            openResult.appendText("Missing data for closing an account.");
             resetAllClose();
         }
         if (closeLname.getText().isBlank()){
             lnameValid = false; // Last name field is empty.
-            closeResult.setText("Missing data for closing an account.");
+            closeResult.appendText("Missing data for closing an account.");
             resetAllClose();
         }
 
         if (closeDOB.getValue() == null){
             dobValid = false;
-            closeResult.setText("Missing data for closing an account.");
+            closeResult.appendText("Missing data for closing an account.");
             resetAllClose();
         }
 
         // If no account type is selected, then you can't close an account.
         if (CloseAccount.getSelectedToggle() == null){
             actValid = false;
-            closeResult.setText("Missing data for closing an account.");
+            closeResult.appendText("Missing data for closing an account.");
             resetAllClose();
         }
 
@@ -332,7 +332,7 @@ public class TransactionManagerController {
             if (!checkDate(birthday, actNameClose(actTypeFXID)).equals("T")){
                 // If the birthday is not valid
                 closeActDOB = false;
-                closeResult.setText(checkDate(birthday, actNameClose(actTypeFXID)));
+                closeResult.appendText(checkDate(birthday, actNameClose(actTypeFXID)));
             }
 
             if (!closeActDOB){
@@ -346,10 +346,10 @@ public class TransactionManagerController {
                     Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
                     Account add = new Checking(holder, 0);
                     if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
                     } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
 
@@ -357,30 +357,30 @@ public class TransactionManagerController {
                     Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
                     Account add = new CollegeChecking(holder, 0, Campus.NEWARK);
                     if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
                     } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
                 } else if (actName.equals("S")){
                     Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
                     Account add = new Savings(holder, 0, true);
                     if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
                     } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
                 } else if (actName.equals("MM")){
                     Profile holder = new Profile(closeFname.getText(), closeLname.getText(), birthday);
                     Account add = new MoneyMarket(holder, 0, true, 0);
                     if (actDb.close(add)){
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() +
                                 " " + add.getHolder().getDOB() + "(" + actName + ")" + " has been closed.");
                     } else {
-                        closeResult.setText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
+                        closeResult.appendText(add.getHolder().getFname() + " " + add.getHolder().getLname() + " " + add.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
                 }
@@ -402,22 +402,22 @@ public class TransactionManagerController {
 
         if (depFname.getText().isBlank()){
             fnameValid = false; // First name field is empty.
-            depositResult.setText("Missing data for making deposit in account.");
+            depositResult.appendText("Missing data for making deposit in account.");
             resetAllDep();
         }
         if (depLname.getText().isBlank()){
             lnameValid = false; // Last name field is empty.
-            depositResult.setText("Missing data for making deposit in account.");
+            depositResult.appendText("Missing data for making deposit in account.");
             resetAllDep();
         }
         if (depDOB.getValue() == null){
             dobValid = false;
-            depositResult.setText("Missing data for making deposit in account.");
+            depositResult.appendText("Missing data for making deposit in account.");
             resetAllDep();
         }
         if (DepositAccount.getSelectedToggle() == null){
             actValid = false;
-            depositResult.setText("Missing data for making deposit in account.");
+            depositResult.appendText("Missing data for making deposit in account.");
             resetAllDep();
         }
 
@@ -434,7 +434,7 @@ public class TransactionManagerController {
             if (!checkDate(birthday, actNameDep(actTypeFXID)).equals("T")){
                 // If the birthday is not valid
                 depActDOB = false;
-                depositResult.setText(checkDate(birthday, actNameDep(actTypeFXID)));
+                depositResult.appendText(checkDate(birthday, actNameDep(actTypeFXID)));
             }
 
             String initialDeposit = depAmt.getText();
@@ -442,11 +442,11 @@ public class TransactionManagerController {
                 int openAmount = Integer.parseInt(initialDeposit);
                 if (openAmount <= 0){
                     depActAmt = false;
-                    depositResult.setText("Deposit - amount cannot be 0 or negative.");
+                    depositResult.appendText("Deposit - amount cannot be 0 or negative.");
                 }
             } else {
                 depActAmt = false;
-                depositResult.setText("Not a valid amount.");
+                depositResult.appendText("Not a valid amount.");
             }
 
             if (!depActDOB || !depActAmt){
@@ -463,10 +463,10 @@ public class TransactionManagerController {
 
                     if (!actDb.depositNotFound(dep)){
                         actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
                                 " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
                     } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
 
@@ -476,10 +476,10 @@ public class TransactionManagerController {
 
                     if (!actDb.depositNotFound(dep)){
                         actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
                                 " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
                     } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
                 } else if (actName.equals("S")){
@@ -488,10 +488,10 @@ public class TransactionManagerController {
 
                     if (!actDb.depositNotFound(dep)){
                         actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
                                 " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
                     } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
                 } else if (actName.equals("MM")){
@@ -500,10 +500,10 @@ public class TransactionManagerController {
 
                     if (!actDb.depositNotFound(dep)){
                         actDb.deposit(dep);
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() +
                                 " " + dep.getHolder().getDOB() + "(" + actName + ")" + " Deposit - balance updated.");
                     } else {
-                        depositResult.setText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
+                        depositResult.appendText(dep.getHolder().getFname() + " " + dep.getHolder().getLname() + " " + dep.getHolder().getDOB() +
                                 "(" + actName + ") " + "is not in the database.");
                     }
                 }
@@ -525,22 +525,22 @@ public class TransactionManagerController {
 
         if (withFname.getText().isBlank()){
             fnameValid = false; // First name field is empty.
-            withResult.setText("Missing data for withdrawing from account.");
+            withResult.appendText("Missing data for withdrawing from account.");
             resetAllWith();
         }
         if (withLname.getText().isBlank()){
             lnameValid = false; // Last name field is empty.
-            withResult.setText("Missing data for withdrawing from account.");
+            withResult.appendText("Missing data for withdrawing from account.");
             resetAllWith();
         }
         if (withDOB.getValue() == null){
             dobValid = false;
-            withResult.setText("Missing data for withdrawing from account.");
+            withResult.appendText("Missing data for withdrawing from account.");
             resetAllWith();
         }
         if (WithdrawAccount.getSelectedToggle() == null){
             actValid = false;
-            withResult.setText("Missing data for withdrawing from account.");
+            withResult.appendText("Missing data for withdrawing from account.");
             resetAllWith();
         }
 
@@ -557,7 +557,7 @@ public class TransactionManagerController {
             if (!checkDate(birthday, actNameWith(actTypeFXID)).equals("T")){
                 // If the birthday is not valid
                 withActDOB = false;
-                withResult.setText(checkDate(birthday, actNameWith(actTypeFXID)));
+                withResult.appendText(checkDate(birthday, actNameWith(actTypeFXID)));
             }
 
             String initWith = withAmt.getText();
@@ -565,11 +565,11 @@ public class TransactionManagerController {
                 int wdrawAmount = Integer.parseInt(initWith);
                 if (wdrawAmount <= 0){
                     withActAmt = false;
-                    withResult.setText("Withdraw - amount cannot be 0 or negative.");
+                    withResult.appendText("Withdraw - amount cannot be 0 or negative.");
                 }
             } else {
                 withActAmt = false;
-                withResult.setText("Not a valid amount.");
+                withResult.appendText("Not a valid amount.");
             }
 
             if (!withActDOB || !withActAmt){
@@ -587,15 +587,15 @@ public class TransactionManagerController {
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
                             // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                     "(" + actName + ") " + " Withdraw - insufficient fund.");
                         }
 
                     } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                        withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                 "(" + actName + ") " + " is not in the database.");
                     }
 
@@ -606,15 +606,15 @@ public class TransactionManagerController {
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
                             // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                     "(" + actName + ") " + " Withdraw - insufficient fund.");
                         }
 
                     } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                        withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                 "(" + actName + ") " + " is not in the database.");
                     }
                 } else if (actName.equals("S")){
@@ -624,15 +624,15 @@ public class TransactionManagerController {
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
                             // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                     "(" + actName + ") " + " Withdraw - insufficient fund.");
                         }
 
                     } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                        withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                 "(" + actName + ") " + " is not in the database.");
                     }
                 } else if (actName.equals("MM")){
@@ -642,15 +642,15 @@ public class TransactionManagerController {
                     if (actDb.contains(with)){
                         if (actDb.withdraw(with)){
                             // actDb.deposit(with);
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() +
                                     " " + with.getHolder().getDOB() + "(" + actName + ")" + " Withdraw - balance updated.");
                         } else {
-                            withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                            withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                     "(" + actName + ") " + " Withdraw - insufficient fund.");
                         }
 
                     } else {
-                        withResult.setText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
+                        withResult.appendText(with.getHolder().getFname() + " " + with.getHolder().getLname() + " " + with.getHolder().getDOB() +
                                 "(" + actName + ") " + " is not in the database.");
                     }
                 }
@@ -662,17 +662,17 @@ public class TransactionManagerController {
     // Account Database Methods
     @FXML
     private void printAll(ActionEvent event){
-        actDBShow.setText(actDb.printSorted());
+        actDBShow.appendText(actDb.printSorted());
     }
 
     @FXML
     private void printIF(ActionEvent event){
-        actDBShow.setText(actDb.printFeesAndInterests());
+        actDBShow.appendText(actDb.printFeesAndInterests());
     }
 
     @FXML
     private void printUB(ActionEvent event){
-        actDBShow.setText(actDb.printUpdatedBalances());
+        actDBShow.appendText(actDb.printUpdatedBalances());
     }
 
 
@@ -864,19 +864,96 @@ public class TransactionManagerController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         File selectedFile = fileChooser.showOpenDialog(null);
+        Boolean success = false;
         try {
             Scanner accountsList = new Scanner(selectedFile);
             while (accountsList.hasNextLine()) {
-                String newAccount = accountsList.nextLine();
-                actDBShow.appendText(newAccount); // testing
+                String data = accountsList.nextLine();
+                if (data.isEmpty()) break;
+                String[] splitData = data.split(",");
+                Account newAccount = makeAccount(splitData);
+                success = true;
+                actDb.open(newAccount);
             }
         } catch (FileNotFoundException e) {
             actDBShow.appendText("File not found");
             //throw new RuntimeException(e);
+        } catch (NullPointerException f) {
+            actDBShow.appendText("File not found");
+        } finally {
+            if (success) actDBShow.appendText("Accounts loaded");
+        }
+    }
+
+    private final int FNAME_IND = 1;
+    private final int LNAME_IND = 2;
+    private final int BALANCE_IND = 4;
+    private final int MM_MIN = 2000;
+    private final int STATUS_IND = 5;
+    private Account makeAccount(String[] account) {
+        String[] parsedBday = account[3].split("/");
+        Date birthday = new Date(Integer.parseInt(parsedBday[2]), Integer.parseInt(parsedBday[0]), Integer.parseInt(parsedBday[1]));
+        switch (account[0]) {
+            case "C" -> {
+                //madeAccount = true;
+                if (checkDate(birthday, "C").equals("T")) {
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    return new Checking(newProfile, Double.parseDouble(account[BALANCE_IND]));
+                }
+            } case "CC" -> {
+                //madeAccount = true;
+                if (checkDate(birthday, "CC").equals("T")) {
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    if (checkCampus(Integer.parseInt(account[5]))) { // if it's a valid campus
+                        return new CollegeChecking(newProfile, Double.parseDouble(account[BALANCE_IND]), findCampus(Integer.parseInt(account[STATUS_IND])));
+                    }
+                }
+            } case "S" -> {
+                //madeAccount = true;
+                if (checkDate(birthday, "S").equals("T")) {
+                    Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                    return new Savings(newProfile, Double.parseDouble(account[BALANCE_IND]), !account[STATUS_IND].equals("0"));
+                }
+            } case "MM" -> {
+                if (Double.parseDouble(account[BALANCE_IND]) < MM_MIN) {
+                    //System.out.println("Minimum of $2000 to open a Money Market account.");
+                } else {
+                    //madeAccount = true;
+                    if (checkDate(birthday, "MM").equals("T")){
+                        Profile newProfile = new Profile(account[FNAME_IND], account[LNAME_IND], birthday);
+                        return new MoneyMarket(newProfile, Double.parseDouble(account[BALANCE_IND]), true, 0);
+                    }
+                }
+            }
+        } //madeAccount = false;
+        return null;
+    }
+
+    private boolean checkCampus(int code){
+        if (code != 0 && code != 1 && code != 2){
+            //System.out.println("Invalid campus code.");
+            return false;
+        }
+        Campus campus = Campus.NEWARK;
+        for (Campus check: Campus.values()) {
+            if (check.getCode() == code) {
+                campus = check;
+                return true;
+            }
         }
 
-        actDBShow.appendText(selectedFile.getName()); // testing if file is successfully opened
-        //if (selectedFile.) // check the file type
+        return false;
+    }
+
+    private Campus findCampus(int campusCode){
+        Campus campus = Campus.NEWARK;
+        for (Campus check: Campus.values()) {
+            if (check.getCode() == campusCode) {
+                campus = check;
+            }
+        }
+
+        return campus;
     }
 
     /**
