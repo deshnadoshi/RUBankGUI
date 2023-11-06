@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1b965aaa-b4ba-4a76-8fa9-152f5901b1a0" name="Changes" comment="printUB in GUI completed">
+    <list default="true" id="1b965aaa-b4ba-4a76-8fa9-152f5901b1a0" name="Changes" comment="Finished adding file upload capability, made some minor changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/AccountDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/AccountDatabase.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/TransactionManagerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/rubankgui/TransactionManagerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/example/rubankgui/TransactionManagerView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/example/rubankgui/TransactionManagerView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +28,14 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="recentNewPullRequestHead">
+      <RepoCoordinatesHolder>
+        <option name="owner" value="deshnadoshi" />
+        <option name="repository" value="RUBankGUI" />
+      </RepoCoordinatesHolder>
+    </option>
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -222,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698853162500</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Finished adding file upload capability, made some minor changes">
+      <option name="closed" value="true" />
+      <created>1699224969888</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1699224969888</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -262,7 +278,8 @@
     <MESSAGE value="Closing account completed!" />
     <MESSAGE value="Deposit/Withdraw methods/Gui connection completed" />
     <MESSAGE value="printUB in GUI completed" />
-    <option name="LAST_COMMIT_MESSAGE" value="printUB in GUI completed" />
+    <MESSAGE value="Finished adding file upload capability, made some minor changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Finished adding file upload capability, made some minor changes" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
